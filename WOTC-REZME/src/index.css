@@ -1,0 +1,56 @@
+@import '@fontsource/poppins/300.css';
+@import '@fontsource/poppins/400.css';
+@import '@fontsource/poppins/500.css';
+@import '@fontsource/poppins/600.css';
+@import '@fontsource/poppins/700.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Ensure proper font loading */
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #ffffff;
+  color: #000000;
+}
+
+/* Custom component styles */
+.step-indicator-line {
+  transition: background-color 0.3s ease;
+}
+
+.form-input {
+  transition: all 0.2s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  ring: 2px;
+  ring-color: #000000;
+  border-color: transparent;
+}
+
+.btn-primary {
+  background-color: #000000;
+  color: #ffffff;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  background-color: #1f2937;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.btn-accent {
+  background-color: #E54747;
+  color: #ffffff;
+  transition: all 0.2s ease;
+}
+
+.btn-accent:hover {
+  background-color: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 25px -5px rgba(229, 71, 71, 0.1), 0 10px 10px -5px rgba(229, 71, 71, 0.04);
+}
