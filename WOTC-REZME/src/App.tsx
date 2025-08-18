@@ -11,6 +11,8 @@ import { ValidationStep } from './components/ValidationStep';
 import { CompletionStep } from './components/CompletionStep';
 import DocumentUploadStep from './components/DocumentUploadStep';
 import { EmployerDashboard } from './components/EmployerDashboard';
+import { Footer } from './components/Footer';
+import { Header } from './components/Header';
 import { CheckCircle, FileText } from 'lucide-react';
 
 function AppRefactored() {
@@ -37,24 +39,30 @@ function AppRefactored() {
 
   if (showDashboard) {
     return (
-      <div className="container-main">
-        <EmployerDashboard 
-          employerInfo={{
-            companyName: employerInfo.companyName,
-            contactName: employerInfo.contactName,
-            contactEmail: employerInfo.contactEmail,
-            contactPhone: employerInfo.contactPhone
-          }}
-          onNewApplication={resetForm} 
-        />
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <div className="flex-1">
+          <EmployerDashboard 
+            employerInfo={{
+              companyName: employerInfo.companyName,
+              contactName: employerInfo.contactName,
+              contactEmail: employerInfo.contactEmail,
+              contactPhone: employerInfo.contactPhone
+            }}
+            onNewApplication={resetForm} 
+          />
+        </div>
+        <Footer />
       </div>
     );
   }
 
   return (
-    <div className="container-main">
-      <div className="content-wrapper">
-        <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <div className="container-main flex-1">
+        <div className="content-wrapper">
+          <div className="max-w-6xl mx-auto">
           {/* Header */}
           <header className="text-center mb-12">
             <h1 className="text-4xl font-semibold text-black mb-4 font-poppins">
@@ -177,36 +185,20 @@ function AppRefactored() {
             </div>
           </main>
 
-          {/* Footer */}
-          <footer className="text-center mt-12 py-8 border-t border-gray-100">
+          {/* Security Badge */}
+          <div className="text-center mt-12 py-4">
             <div className="flex items-center justify-center mb-4">
               <CheckCircle className="w-5 h-5 text-cinnabar mr-2" />
               <span className="text-sm text-gray35 font-poppins">
                 Secure & WOTC Compliant
               </span>
             </div>
-            <p className="text-xs text-gray35 font-poppins">
-              © 2024 Rézme. All rights reserved. 
-              <span className="mx-2">•</span>
-              <a 
-                href="#" 
-                className="hover:text-black transition-colors duration-200 focus-visible"
-                aria-label="Privacy Policy"
-              >
-                Privacy Policy
-              </a>
-              <span className="mx-2">•</span>
-              <a 
-                href="#" 
-                className="hover:text-black transition-colors duration-200 focus-visible"
-                aria-label="Terms of Service"
-              >
-                Terms
-              </a>
-            </p>
-          </footer>
+          </div>
         </div>
       </div>
+      </div>
+      
+      <Footer />
     </div>
   );
 }
