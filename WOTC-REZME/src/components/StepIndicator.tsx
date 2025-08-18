@@ -11,6 +11,7 @@ const candidateSteps = [
   'Welcome',
   'Personal Information',
   'Target Groups',
+  'Documents',
   'Important Dates',
   'Validation',
   'Complete'

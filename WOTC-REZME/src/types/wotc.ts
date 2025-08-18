@@ -31,13 +31,26 @@ export interface ImportantDates {
   dateStarted: string;
 }
 
+export interface DocumentUpload {
+  id: string;
+  targetGroupId: string;
+  targetGroupName: string;
+  fileName: string;
+  fileType: string;
+  fileSize: number;
+  uploadDate: string;
+  file?: File;
+}
+
 export interface WOTCFormData {
   personalInfo: PersonalInfo;
   targetGroups: TargetGroup[];
   importantDates: ImportantDates;
+  documents: DocumentUpload[];
   currentStep: number;
   isComplete: boolean;
   userType: 'candidate' | 'employer';
+  documentationComplete: boolean;
 }
 
 export interface ValidationResult {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StepIndicator } from './components/StepIndicator';
 import { WelcomeStep } from './components/WelcomeStep';
 import { PersonalInfoStep } from './components/PersonalInfoStep';
@@ -7,34 +7,178 @@ import { TargetGroupsStep } from './components/TargetGroupsStep';
 import { ImportantDatesStep } from './components/ImportantDatesStep';
 import { ValidationStep } from './components/ValidationStep';
 import { CompletionStep } from './components/CompletionStep';
-import { DocumentUploadStep } from './components/DocumentUploadStep';
 import { EmployerDashboard } from './components/EmployerDashboard';
+import { WOTCFormData, PersonalInfo, ImportantDates, TargetGroup } from './types/wotc';
+import { TARGET_GROUPS } from './data/targetGroups';
 import { CheckCircle, FileText } from 'lucide-react';
-import { useFormState } from './hooks/useFormState';
-import { useEmployerState } from './hooks/useEmployerState';
 
-function AppRefactored() {
-  const {
-    formData,
-    showDashboard,
-    totalSteps,
-    updatePersonalInfo,
-    updateTargetGroups,
-    updateImportantDates,
-    updateDocuments,
-    handleUserTypeChange,
-    nextStep,
-    previousStep,
-    completeForm,
-    loginToDashboard,
-    resetForm
-  } = useFormState();
+const CANDIDATE_STEPS = 6;
+const EMPLOYER_STEPS = 5;
 
-  const { employerInfo, updateEmployerInfo, resetEmployerInfo } = useEmployerState();
+// Helper function to get initial dates based on user type
+const getInitialDates = (userType: 'candidate' | 'employer'): ImportantDates => {
+  if (userType === 'employer') {
+    // Prefill with demo data for employer confirmation
+    const today = new Date();
+    const gaveInfo = new Date(today.getTime() - 14 * 24 * 60 * 60 * 1000); // 14 days ago
+    const offered = new Date(today.getTime() - 10 * 24 * 60 * 60 * 1000); // 10 days ago
+    const hired = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000); // 7 days ago
+    const started = new Date(today.getTime() - 3 * 24 * 60 * 60 * 1000); // 3 days ago
+    
+    return {
+      dateGaveInfo: gaveInfo.toISOString().split('T')[0],
+      dateOffered: offered.toISOString().split('T')[0],
+      dateHired: hired.toISOString().split('T')[0],
+      dateStarted: started.toISOString().split('T')[0]
+    };
+  }
+  
+  return {
+    dateGaveInfo: '',
+    dateOffered: '',
+    dateHired: '',
+    dateStarted: ''
+  };
+};
+
+function App() {
+  const [formData, setFormData] = useState<WOTCFormData>({
+    userType: 'candidate',
+    personalInfo: {
+      fullName: '',
+      socialSecurityNumber: '',
+      streetAddress: '',
+      city: '',
+      state: '',
+      zipCode: '',
+      cityStateZip: '',
+      county: '',
+      telephoneNumber: '',
+      dateOfBirth: '',
+      conditionalCertification: false,
+      targetGroupStatements: false,
+      veteranUnemployed6Months: false,
+      veteranDisabledDischarged: false,
+      veteranDisabledUnemployed6Months: false,
+      tanfFamily: false,
+      unemploymentCompensation: false
+    },
+    targetGroups: TARGET_GROUPS,
+    importantDates: getInitialDates('candidate'),
+    currentStep: 1,
+    isComplete: false
+  });
+
+  const [showDashboard, setShowDashboard] = useState(false);
+
+  const [employerInfo, setEmployerInfo] = useState({
+    companyName: '',
+    employerEIN: '',
+    streetAddress: '',
+    city: '',
+    state: '',
+    zipCode: '',
+    contactName: '',
+    contactTitle: '',
+    contactPhone: '',
+    contactEmail: '',
+    jobTitle: '',
+    startDate: '',
+    hourlyWage: '',
+    hoursPerWeek: ''
+  });
+
+  const totalSteps = formData.userType === 'candidate' ? CANDIDATE_STEPS : EMPLOYER_STEPS;
+
+  const updatePersonalInfo = (info: PersonalInfo) => {
+    setFormData(prev => ({ ...prev, personalInfo: info }));
+  };
+
+  const updateTargetGroups = (groups: TargetGroup[]) => {
+    setFormData(prev => ({ ...prev, targetGroups: groups }));
+  };
+
+  const updateImportantDates = (dates: ImportantDates) => {
+    setFormData(prev => ({ ...prev, importantDates: dates }));
+  };
+
+  const updateEmployerInfo = (info: typeof employerInfo) => {
+    setEmployerInfo(info);
+  };
+
+  const handleUserTypeChange = (type: 'candidate' | 'employer') => {
+    setFormData(prev => ({ 
+      ...prev, 
+      userType: type,
+      currentStep: 1,
+      isComplete: false,
+      importantDates: getInitialDates(type)
+    }));
+  };
+
+  const nextStep = () => {
+    setFormData(prev => ({ ...prev, currentStep: prev.currentStep + 1 }));
+  };
+
+  const previousStep = () => {
+    setFormData(prev => ({ ...prev, currentStep: prev.currentStep - 1 }));
+  };
+
+  const completeForm = () => {
+    if (formData.userType === 'employer') {
+      setShowDashboard(true);
+    } else {
+      setFormData(prev => ({ ...prev, isComplete: true }));
+    }
+  };
+
+  const loginToDashboard = () => {
+    setShowDashboard(true);
+  };
 
   const handleNewApplication = () => {
-    resetForm();
-    resetEmployerInfo();
+    setShowDashboard(false);
+    setFormData(prev => ({
+      ...prev,
+      currentStep: 1,
+      isComplete: false,
+      personalInfo: {
+        fullName: '',
+        socialSecurityNumber: '',
+        streetAddress: '',
+        city: '',
+        state: '',
+        zipCode: '',
+        county: '',
+        telephoneNumber: '',
+        dateOfBirth: '',
+        conditionalCertification: false,
+        targetGroupStatements: false,
+        veteranUnemployed6Months: false,
+        veteranDisabledDischarged: false,
+        veteranDisabledUnemployed6Months: false,
+        tanfFamily: false,
+        unemploymentCompensation: false
+      },
+      targetGroups: TARGET_GROUPS,
+      importantDates: getInitialDates(formData.userType)
+    }));
+    setEmployerInfo({
+      companyName: '',
+      employerEIN: '',
+      streetAddress: '',
+      city: '',
+      state: '',
+      zipCode: '',
+      contactName: '',
+      contactTitle: '',
+      contactPhone: '',
+      contactEmail: '',
+      jobTitle: '',
+      startDate: '',
+      hourlyWage: '',
+      hoursPerWeek: ''
+    });
   };
 
   if (showDashboard) {
@@ -171,16 +315,6 @@ function AppRefactored() {
             )}
             
             {formData.currentStep === 4 && formData.userType === 'candidate' && (
-              <DocumentUploadStep
-                targetGroups={formData.targetGroups}
-                documents={formData.documents}
-                onUpdate={updateDocuments}
-                onNext={nextStep}
-                onPrevious={previousStep}
-              />
-            )}
-            
-            {formData.currentStep === 5 && formData.userType === 'candidate' && (
               <ImportantDatesStep
                 importantDates={formData.importantDates}
                 onUpdate={updateImportantDates}
@@ -198,7 +332,7 @@ function AppRefactored() {
               />
             )}
             
-            {formData.currentStep === 6 && formData.userType === 'candidate' && (
+            {formData.currentStep === 5 && formData.userType === 'candidate' && (
               <ValidationStep
                 formData={formData}
                 userType={formData.userType}
@@ -207,7 +341,7 @@ function AppRefactored() {
               />
             )}
             
-            {formData.currentStep === 7 && formData.userType === 'candidate' && (
+            {formData.currentStep === 6 && formData.userType === 'candidate' && (
               <CompletionStep
                 formData={formData}
                 employerInfo={employerInfo}
@@ -221,4 +355,4 @@ function AppRefactored() {
   );
 }
 
-export default AppRefactored; 
+export default App;

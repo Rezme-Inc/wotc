@@ -1,0 +1,2 @@
+export const CANDIDATE_STEPS = 7; // Welcome, Personal Info, Target Groups, Document Upload, Important Dates, Validation, Completion
+export const EMPLOYER_STEPS = 5; // Welcome, Employer Info, Important Dates, Validation, Completion 
