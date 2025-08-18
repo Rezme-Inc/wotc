@@ -106,11 +106,17 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
       </div>
 
       {errors.length > 0 && (
-        <div className="bg-white border-l-4 border-cinnabar rounded-lg p-6 mb-8 shadow-sm">
-          <h3 className="text-black font-medium mb-3 font-poppins">Please correct the following:</h3>
-          <ul className="list-disc list-inside text-gray35 text-sm space-y-2 font-poppins font-light">
+        <div className="card border-l-4 border-cinnabar p-6 mb-8 bg-red-50">
+          <h3 className="text-black font-medium mb-3 font-poppins flex items-center">
+            <span className="w-2 h-2 bg-cinnabar rounded-full mr-3"></span>
+            Please correct the following:
+          </h3>
+          <ul className="space-y-2">
             {errors.map((error, index) => (
-              <li key={index}>{error}</li>
+              <li key={index} className="form-error flex items-start">
+                <span className="text-cinnabar mr-2">•</span>
+                {error}
+              </li>
             ))}
           </ul>
         </div>
@@ -123,20 +129,25 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
             {/* Name and SSN Row */}
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-base font-medium text-black mb-3 font-poppins">
+                <label className="form-label">
                   Your name *
                 </label>
                 <input
                   type="text"
                   value={personalInfo.fullName}
                   onChange={(e) => onUpdate({ ...personalInfo, fullName: e.target.value })}
-                  className="w-full px-5 py-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 font-poppins text-gray35 bg-white shadow-sm hover:shadow-md"
+                  className="form-input"
                   placeholder="Enter your full legal name"
+                  required
+                  aria-describedby="name-hint"
                 />
+                <p id="name-hint" className="form-hint">
+                  Enter your full legal name as it appears on official documents
+                </p>
               </div>
 
               <div>
-                <label className="block text-base font-medium text-black mb-3 font-poppins">
+                <label className="form-label">
                   Social security number ▶ *
                 </label>
                 <input
@@ -146,10 +157,15 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
                     const formatted = formatSSN(e.target.value);
                     onUpdate({ ...personalInfo, socialSecurityNumber: formatted });
                   }}
-                  className="w-full px-5 py-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 font-poppins text-gray35 bg-white shadow-sm hover:shadow-md"
+                  className="form-input"
                   placeholder="XXX-XX-XXXX"
                   maxLength={11}
+                  required
+                  aria-describedby="ssn-hint"
                 />
+                <p id="ssn-hint" className="form-hint">
+                  Required for tax credit verification
+                </p>
               </div>
             </div>
 
@@ -444,17 +460,19 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
       <div className="flex justify-between mt-12">
         <button
           onClick={onPrevious}
-          className="flex items-center px-8 py-4 text-gray35 hover:text-black transition-all duration-200 font-poppins font-medium rounded-xl hover:bg-gray-50"
+          className="btn-ghost flex items-center px-8 py-4"
+          aria-label="Go back to previous step"
         >
-          <ArrowLeft className="mr-3 w-5 h-5" />
+          <ArrowLeft className="mr-3 w-5 h-5" aria-hidden="true" />
           Previous
         </button>
         <button
           onClick={validateAndProceed}
-          className="bg-black hover:bg-gray-800 text-white font-medium py-4 px-10 rounded-xl transition-all duration-200 flex items-center font-poppins shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+          className="btn-primary flex items-center px-10 py-4"
+          aria-label="Continue to next step"
         >
           Continue
-          <ArrowRight className="ml-3 w-5 h-5" />
+          <ArrowRight className="ml-3 w-5 h-5" aria-hidden="true" />
         </button>
       </div>
     </div>

@@ -36,12 +36,18 @@ export const calculateTaxCredit = (
 
 export const getStatusColor = (status: string): string => {
   switch (status) {
-    case 'submitted': return 'bg-blue-100 text-blue-800';
-    case 'pending_swa': return 'bg-yellow-100 text-yellow-800';
-    case 'conditional_cert': return 'bg-green-100 text-green-800';
-    case 'final_cert': return 'bg-emerald-100 text-emerald-800';
-    case 'denied': return 'bg-red-100 text-red-800';
-    default: return 'bg-gray-100 text-gray-800';
+    case 'submitted': 
+      return 'status-info';
+    case 'pending_swa': 
+      return 'status-warning';
+    case 'conditional_cert': 
+      return 'status-success';
+    case 'final_cert': 
+      return 'status-success bg-green-100 text-green-800 border-green-300';
+    case 'denied': 
+      return 'status-error';
+    default: 
+      return 'status-badge bg-gray-100 text-gray35 border-gray-200';
   }
 };
 
