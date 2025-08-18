@@ -8,49 +8,208 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Ensure proper font loading */
+/* Base styling aligned with style guide */
 body {
   font-family: 'Poppins', sans-serif;
   background-color: #ffffff;
   color: #000000;
+  line-height: 1.6;
+  font-weight: 400;
 }
 
-/* Custom component styles */
-.step-indicator-line {
-  transition: background-color 0.3s ease;
+/* Typography scale for consistent hierarchy */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  color: #000000;
+  line-height: 1.4;
 }
 
-.form-input {
-  transition: all 0.2s ease;
-}
-
-.form-input:focus {
-  outline: none;
-  ring: 2px;
-  ring-color: #000000;
-  border-color: transparent;
+/* Component styles for design system consistency */
+.btn-base {
+  @apply font-poppins font-medium transition-all duration-200 rounded-xl border-0;
+  @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
+  min-height: 44px; /* Accessibility requirement for touch targets */
 }
 
 .btn-primary {
-  background-color: #000000;
-  color: #ffffff;
-  transition: all 0.2s ease;
-}
-
-.btn-primary:hover {
-  background-color: #1f2937;
-  transform: translateY(-1px);
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  @apply btn-base bg-black text-white;
+  @apply hover:bg-gray-800 focus:ring-black;
+  @apply shadow-md hover:shadow-lg transform hover:-translate-y-0.5;
 }
 
 .btn-accent {
-  background-color: #E54747;
-  color: #ffffff;
-  transition: all 0.2s ease;
+  @apply btn-base bg-cinnabar text-white;
+  @apply hover:bg-red-600 focus:ring-cinnabar;
+  @apply shadow-md hover:shadow-lg transform hover:-translate-y-0.5;
 }
 
-.btn-accent:hover {
-  background-color: #dc2626;
-  transform: translateY(-1px);
-  box-shadow: 0 10px 25px -5px rgba(229, 71, 71, 0.1), 0 10px 10px -5px rgba(229, 71, 71, 0.04);
+.btn-secondary {
+  @apply btn-base bg-white text-gray35 border border-gray-200;
+  @apply hover:bg-gray-50 hover:text-black focus:ring-gray35;
+  @apply shadow-sm hover:shadow-md;
+}
+
+.btn-ghost {
+  @apply btn-base bg-transparent text-gray35;
+  @apply hover:bg-gray-50 hover:text-black focus:ring-gray35;
+}
+
+/* Form elements with accessibility focus */
+.form-input {
+  @apply w-full px-4 py-3 border border-gray-200 rounded-xl font-poppins;
+  @apply bg-white text-black placeholder-gray35;
+  @apply transition-all duration-200 shadow-sm;
+  @apply focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent;
+  @apply hover:shadow-md hover:border-gray-300;
+  min-height: 44px; /* Accessibility compliance */
+}
+
+.form-input:disabled {
+  @apply bg-gray-50 text-gray35 cursor-not-allowed;
+}
+
+.form-label {
+  @apply block text-sm font-medium text-black mb-2 font-poppins;
+}
+
+.form-hint {
+  @apply text-sm text-gray35 mt-1 font-poppins font-light leading-relaxed;
+}
+
+.form-error {
+  @apply text-sm text-cinnabar mt-1 font-poppins font-medium;
+}
+
+/* Card components for content organization */
+.card {
+  @apply bg-white rounded-xl border border-gray-100 shadow-sm;
+  @apply hover:shadow-md transition-shadow duration-200;
+}
+
+.card-header {
+  @apply px-6 py-4 border-b border-gray-100;
+}
+
+.card-body {
+  @apply px-6 py-4;
+}
+
+.card-footer {
+  @apply px-6 py-4 border-t border-gray-100 bg-gray-50 rounded-b-xl;
+}
+
+/* Status and feedback styling */
+.status-badge {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium;
+}
+
+.status-success {
+  @apply status-badge bg-green-50 text-green-700 border border-green-200;
+}
+
+.status-warning {
+  @apply status-badge bg-yellow-50 text-yellow-700 border border-yellow-200;
+}
+
+.status-error {
+  @apply status-badge bg-red-50 text-red-700 border border-red-200;
+}
+
+.status-info {
+  @apply status-badge bg-blue-50 text-blue-700 border border-blue-200;
+}
+
+/* Navigation and step indicators */
+.step-indicator-line {
+  @apply transition-all duration-300 ease-in-out;
+}
+
+.step-complete {
+  @apply bg-cinnabar text-white shadow-md;
+}
+
+.step-current {
+  @apply bg-black text-white shadow-md ring-2 ring-black ring-opacity-20;
+}
+
+.step-pending {
+  @apply bg-gray-100 text-gray35 border border-gray-200;
+}
+
+/* Layout containers */
+.container-main {
+  @apply min-h-screen bg-white;
+}
+
+.content-wrapper {
+  @apply max-w-6xl mx-auto px-4 py-8;
+}
+
+.section-spacing {
+  @apply space-y-6;
+}
+
+/* Accessibility enhancements */
+.sr-only {
+  @apply absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0;
+}
+
+/* Focus visible for better keyboard navigation */
+.focus-visible {
+  @apply outline-none ring-2 ring-black ring-offset-2;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .btn-primary {
+    @apply ring-2 ring-black;
+  }
+  
+  .btn-accent {
+    @apply ring-2 ring-cinnabar;
+  }
+  
+  .form-input {
+    @apply border-2 border-black;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    @apply transition-none;
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .print-only {
+    display: block !important;
+  }
+  
+  body {
+    @apply text-black bg-white;
+  }
+}
+
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100 rounded-full;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray35 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-black;
 }

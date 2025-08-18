@@ -1,5 +1,5 @@
 import React from 'react';
-import { FileText, Clock, ArrowRight, Building2, User } from 'lucide-react';
+import { User, Building2 } from 'lucide-react';
 
 interface WelcomeStepProps {
   onNext: () => void;
@@ -8,121 +8,144 @@ interface WelcomeStepProps {
   onLoginToDashboard?: () => void;
 }
 
-export const WelcomeStep: React.FC<WelcomeStepProps> = ({ onNext, userType, onUserTypeChange, onLoginToDashboard }) => {
+export const WelcomeStep: React.FC<WelcomeStepProps> = ({ 
+  onNext, 
+  userType, 
+  onUserTypeChange, 
+  onLoginToDashboard 
+}) => {
   return (
-    <div className="max-w-3xl mx-auto text-center">
+    <div className="max-w-4xl mx-auto text-center section-spacing">
       {/* User Type Toggle */}
-      <div className="mb-8">
-        <div className="bg-gray-50 rounded-xl p-2 inline-flex border border-gray-200">
+      <div className="mb-12">
+        <h2 className="text-2xl font-semibold text-black mb-6 font-poppins">
+          Choose Your Role
+        </h2>
+        <div className="card inline-flex p-2 bg-gray-50 border-gray-200">
           <button
             onClick={() => onUserTypeChange('candidate')}
-            className={`flex items-center px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
+            className={`flex items-center px-8 py-4 rounded-xl font-medium transition-all duration-200 min-h-[56px] focus-visible ${
               userType === 'candidate'
-                ? 'bg-black text-white shadow-md'
-                : 'text-gray35 hover:text-black hover:bg-gray-100'
+                ? 'btn-primary shadow-md'
+                : 'btn-ghost hover:bg-white'
             }`}
+            aria-pressed={userType === 'candidate'}
+            aria-label="Select job candidate role"
           >
-            <User className="w-5 h-5 mr-2" />
+            <User className="w-5 h-5 mr-3" aria-hidden="true" />
             Job Candidate
           </button>
           <button
             onClick={() => onUserTypeChange('employer')}
-            className={`flex items-center px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
+            className={`flex items-center px-8 py-4 rounded-xl font-medium transition-all duration-200 min-h-[56px] focus-visible ${
               userType === 'employer'
-                ? 'bg-black text-white shadow-md'
-                : 'text-gray35 hover:text-black hover:bg-gray-100'
+                ? 'btn-primary shadow-md'
+                : 'btn-ghost hover:bg-white'
             }`}
+            aria-pressed={userType === 'employer'}
+            aria-label="Select employer role"
           >
-            <Building2 className="w-5 h-5 mr-2" />
+            <Building2 className="w-5 h-5 mr-3" aria-hidden="true" />
             Employer
           </button>
         </div>
       </div>
 
-      <div className="mb-8">
-        <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-8 border border-gray-100">
-          {userType === 'candidate' ? (
-            <User className="w-12 h-12 text-black" />
-          ) : (
-            <Building2 className="w-12 h-12 text-black" />
-          )}
-        </div>
-        
+      {/* Content based on user type */}
+      <div className="mb-12 animate-fade-in">
         {userType === 'candidate' ? (
-          <>
-            <h1 className="text-4xl font-semibold text-black mb-6 font-poppins">
-              Welcome to Rézme's Work Opportunity Tax Credit Pre-Screening Portal
-            </h1>
-            <p className="text-xl text-gray35 mb-10 font-poppins font-light leading-relaxed">
-              I'll guide you through Form 8850. It should take about 5 minutes. Shall we begin?
+          <div className="card p-8 bg-gray-50 border-gray-100 max-w-3xl mx-auto">
+            <h3 className="text-xl font-semibold text-black mb-4 font-poppins">
+              For Job Candidates
+            </h3>
+            <p className="text-gray35 font-poppins leading-relaxed mb-6">
+              Complete your WOTC pre-screening to help your employer determine if you qualify 
+              for the Work Opportunity Tax Credit. This process typically takes 5-10 minutes 
+              and helps ensure faster processing of your employment documentation.
             </p>
-          </>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+              <div className="flex items-center text-gray35">
+                <div className="w-2 h-2 bg-cinnabar rounded-full mr-3 flex-shrink-0"></div>
+                <span>Complete personal information</span>
+              </div>
+              <div className="flex items-center text-gray35">
+                <div className="w-2 h-2 bg-cinnabar rounded-full mr-3 flex-shrink-0"></div>
+                <span>Upload supporting documents</span>
+              </div>
+              <div className="flex items-center text-gray35">
+                <div className="w-2 h-2 bg-cinnabar rounded-full mr-3 flex-shrink-0"></div>
+                <span>Review target group categories</span>
+              </div>
+              <div className="flex items-center text-gray35">
+                <div className="w-2 h-2 bg-cinnabar rounded-full mr-3 flex-shrink-0"></div>
+                <span>Validate employment dates</span>
+              </div>
+            </div>
+          </div>
         ) : (
-          <>
-            <h1 className="text-4xl font-semibold text-black mb-6 font-poppins">
-              Employer Portal - Complete Form 8850
-            </h1>
-            <p className="text-xl text-gray35 mb-10 font-poppins font-light leading-relaxed">
-              Complete the employer section of Form 8850 for your job candidate. This will take about 3 minutes.
+          <div className="card p-8 bg-gray-50 border-gray-100 max-w-3xl mx-auto">
+            <h3 className="text-xl font-semibold text-black mb-4 font-poppins">
+              For Employers
+            </h3>
+            <p className="text-gray35 font-poppins leading-relaxed mb-6">
+              Complete the employer section of Form 8850 and manage your WOTC applications. 
+              Streamline your hiring process while maximizing available tax credits for 
+              qualifying employees.
             </p>
-          </>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+              <div className="flex items-center text-gray35">
+                <div className="w-2 h-2 bg-cinnabar rounded-full mr-3 flex-shrink-0"></div>
+                <span>Company information setup</span>
+              </div>
+              <div className="flex items-center text-gray35">
+                <div className="w-2 h-2 bg-cinnabar rounded-full mr-3 flex-shrink-0"></div>
+                <span>Application management dashboard</span>
+              </div>
+              <div className="flex items-center text-gray35">
+                <div className="w-2 h-2 bg-cinnabar rounded-full mr-3 flex-shrink-0"></div>
+                <span>Form 8850 completion</span>
+              </div>
+              <div className="flex items-center text-gray35">
+                <div className="w-2 h-2 bg-cinnabar rounded-full mr-3 flex-shrink-0"></div>
+                <span>State agency submission</span>
+              </div>
+            </div>
+          </div>
         )}
       </div>
 
-      <div className="bg-gray-50 rounded-xl p-8 mb-10 border border-gray-100">
-        <div className="flex items-center justify-center mb-6">
-          <Clock className="w-6 h-6 text-black mr-3" />
-          <span className="text-black font-medium font-poppins text-lg">
-            Estimated Time: {userType === 'candidate' ? '5' : '3'} minutes
-          </span>
-        </div>
-        <div className="text-gray35 font-poppins">
-          <p className="mb-4 font-medium">
-            {userType === 'candidate' ? 'This pre-screening will collect:' : 'This process will collect:'}
-          </p>
-          {userType === 'candidate' ? (
-            <ul className="list-disc list-inside space-y-2 text-left max-w-lg mx-auto font-light">
-              <li>Your personal information</li>
-              <li>Applicable target group categories</li>
-              <li>Important employment dates</li>
-              <li>Electronic signature for compliance</li>
-            </ul>
-          ) : (
-            <ul className="list-disc list-inside space-y-2 text-left max-w-lg mx-auto font-light">
-              <li>Company information</li>
-              <li>Job position details</li>
-              <li>Employment verification</li>
-              <li>Employer signature and submission</li>
-            </ul>
-          )}
-        </div>
-      </div>
-
-      <div className="bg-white border-l-4 border-cinnabar rounded-lg p-6 mb-10 shadow-sm">
-        <p className="text-sm text-gray35 font-poppins font-light leading-relaxed">
-          <strong className="font-medium text-black">Important:</strong> This information is used to determine eligibility for the Work Opportunity Tax Credit. 
-          All information provided will be kept confidential and used only for compliance purposes.
-        </p>
-      </div>
-
-      <button
-        onClick={onNext}
-        className="bg-black hover:bg-gray-800 text-white font-medium py-4 px-10 rounded-xl transition-all duration-200 flex items-center mx-auto font-poppins text-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
-      >
-        {userType === 'candidate' ? 'Begin Pre-Screening' : 'Begin Employer Section'}
-        <ArrowRight className="ml-3 w-6 h-6" />
-      </button>
-      
-      {userType === 'employer' && (
-        <div className="mt-6 text-center">
+      {/* Action buttons */}
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <button
+          onClick={onNext}
+          className="btn-primary px-8 py-4 text-lg font-poppins min-w-[200px]"
+          aria-label={`Start ${userType === 'candidate' ? 'candidate' : 'employer'} application process`}
+        >
+          {userType === 'candidate' ? 'Start Pre-Screening' : 'Begin Employer Setup'}
+        </button>
+        
+        {userType === 'employer' && onLoginToDashboard && (
           <button
             onClick={onLoginToDashboard}
-            className="text-black hover:text-gray-800 font-medium underline transition-colors duration-200 font-poppins"
+            className="btn-secondary px-8 py-4 text-lg font-poppins min-w-[200px]"
+            aria-label="Access existing employer dashboard"
           >
-            Already have an account? Login to Dashboard
+            Access Dashboard
           </button>
-        </div>
-      )}
+        )}
+      </div>
+
+      {/* Additional information */}
+      <div className="mt-12 card p-6 bg-blue-50 border-blue-200 max-w-2xl mx-auto">
+        <h4 className="text-base font-semibold text-black mb-3 font-poppins">
+          About the Work Opportunity Tax Credit
+        </h4>
+        <p className="text-sm text-gray35 font-poppins leading-relaxed">
+          The WOTC program provides federal tax credits to employers who hire individuals 
+          from certain target groups that have consistently faced significant barriers to 
+          employment. Credits can range from $1,200 to $9,600 per qualified employee.
+        </p>
+      </div>
     </div>
   );
 };
