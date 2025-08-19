@@ -10,6 +10,7 @@ interface ValidationStepProps {
   userType?: 'candidate' | 'employer';
 }
 
+// Validates form data and displays results to user, allowing them to proceed only if all dates are in correct chronological order.
 export const ValidationStep: React.FC<ValidationStepProps> = ({
   formData,
   onNext,
