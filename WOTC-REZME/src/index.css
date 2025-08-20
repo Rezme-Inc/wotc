@@ -52,7 +52,9 @@ h1, h2, h3, h4, h5, h6 {
 
 .btn-ghost {
   @apply btn-base bg-transparent text-gray35;
-  @apply hover:bg-green-50 hover:text-green-700 focus:ring-green-500;
+  @apply hover:bg-green-100 hover:text-green-800 focus:ring-green-500;
+  @apply hover:scale-105 hover:shadow-md;
+  @apply transition-all duration-200;
 }
 
 /* Form elements with accessibility focus */
