@@ -260,7 +260,7 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
             {/* Date of Birth */}
             <div>
               <label className="block text-base font-medium text-black mb-3 font-poppins">
-                If you are under age 40, enter your date of birth (month, day, year) *
+                Enter your date of birth (month, day, year) *
               </label>
               <input
                 type="date"
