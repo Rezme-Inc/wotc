@@ -1,6 +1,5 @@
 import { useState, useCallback } from 'react';
 import { PersonalInfo, ImportantDates, ValidationResult } from '../types/wotc';
-import { validateDates } from '../utils/dateValidation';
 
 export const useValidation = () => {
   const [errors, setErrors] = useState<string[]>([]);
@@ -128,7 +127,74 @@ export const useValidation = () => {
   }, []);
 
   const validateImportantDates = useCallback((dates: ImportantDates, userType: 'candidate' | 'employer'): ValidationResult => {
-    return validateDates(dates, userType);
+    const newErrors: string[] = [];
+    
+    // Check if all dates are provided
+    if (!dates.dateGaveInfo) newErrors.push('1. Date gave info is required');
+    if (!dates.dateOffered) newErrors.push('2. Date offered is required');
+    if (!dates.dateHired) newErrors.push('3. Date hired is required');
+    if (!dates.dateStarted) newErrors.push('4. Date started is required');
+    
+    // If all dates are provided, validate sequence and future dates
+    if (newErrors.length === 0) {
+      const gaveInfo = new Date(dates.dateGaveInfo);
+      const offered = new Date(dates.dateOffered);
+      const hired = new Date(dates.dateHired);
+      const started = new Date(dates.dateStarted);
+      
+      // Check if dates are valid
+      if (isNaN(gaveInfo.getTime())) newErrors.push('1. Date gave info is invalid');
+      if (isNaN(offered.getTime())) newErrors.push('2. Date offered is invalid');
+      if (isNaN(hired.getTime())) newErrors.push('3. Date hired is invalid');
+      if (isNaN(started.getTime())) newErrors.push('4. Date started is invalid');
+      
+      if (newErrors.length === 0) {
+        // Check sequence based on user type
+        if (userType === 'candidate') {
+          // Candidate: 1 ≤ 2 ≤ 3 ≤ 4
+          if (gaveInfo > offered) {
+            newErrors.push('1. Gave Info must be on or before 2. Offered Job');
+          }
+          if (offered > hired) {
+            newErrors.push('2. Offered Job must be on or before 3. Hired date');
+          }
+          if (hired > started) {
+            newErrors.push('3. Hired must be on or before 4. Started Work');
+          }
+        } else {
+          // Employer: 1 ≤ 2, and both 3 & 4 must be after 1 & 2
+          if (gaveInfo > offered) {
+            newErrors.push('1. Gave Info must be on or before 2. Offered Job');
+          }
+          if (hired < gaveInfo) {
+            newErrors.push('3. Hired must be on or after 1. Gave Info');
+          }
+          if (hired < offered) {
+            newErrors.push('3. Hired must be on or after 2. Offered Job');
+          }
+          if (started < gaveInfo) {
+            newErrors.push('4. Started Work must be on or after 1. Gave Info');
+          }
+          if (started < offered) {
+            newErrors.push('4. Started Work must be on or after 2. Offered Job');
+          }
+        }
+        
+        // Check that dates are not in the future
+        const today = new Date();
+        today.setHours(23, 59, 59, 999);
+        
+        if (gaveInfo > today) newErrors.push('1. Gave Info cannot be in the future');
+        if (offered > today) newErrors.push('2. Offered Job cannot be in the future');
+        if (hired > today) newErrors.push('3. Hired cannot be in the future');
+        if (started > today) newErrors.push('4. Started Work cannot be in the future');
+      }
+    }
+    
+    return {
+      isValid: newErrors.length === 0,
+      errors: newErrors
+    };
   }, []);
 
   const clearErrors = useCallback(() => {

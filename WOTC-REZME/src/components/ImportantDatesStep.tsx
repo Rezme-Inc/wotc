@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowRight, ArrowLeft, Calendar, AlertCircle } from 'lucide-react';
 import { ImportantDates } from '../types/wotc';
+import { useValidation } from '../hooks/useValidation';
 
 interface ImportantDatesStepProps {
   importantDates: ImportantDates;
@@ -18,18 +19,13 @@ export const ImportantDatesStep: React.FC<ImportantDatesStepProps> = ({
   userType = 'candidate'
 }) => {
   const [errors, setErrors] = useState<string[]>([]);
+  const { validateImportantDates } = useValidation();
 
   const validateAndProceed = () => {
-    const newErrors: string[] = [];
+    const validation = validateImportantDates(importantDates, userType);
+    setErrors(validation.errors);
     
-    if (!importantDates.dateGaveInfo) newErrors.push('Date gave info is required');
-    if (!importantDates.dateOffered) newErrors.push('Date offered is required');
-    if (!importantDates.dateHired) newErrors.push('Date hired is required');
-    if (!importantDates.dateStarted) newErrors.push('Date started is required');
-    
-    setErrors(newErrors);
-    
-    if (newErrors.length === 0) {
+    if (validation.isValid) {
       onNext();
     }
   };
@@ -55,7 +51,7 @@ export const ImportantDatesStep: React.FC<ImportantDatesStepProps> = ({
       {errors.length > 0 && (
         <div className="bg-white border-l-4 border-cinnabar rounded-lg p-6 mb-8 shadow-sm">
           <h3 className="text-black font-medium mb-3 font-poppins">
-            {userType === 'candidate' ? 'Please provide all required dates:' : 'Please confirm all required dates:'}
+            The following issues were found:
           </h3>
           <ul className="list-disc list-inside text-gray35 text-sm space-y-2 font-poppins font-light">
             {errors.map((error, index) => (
