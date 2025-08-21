@@ -420,42 +420,9 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
               </div>
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="md:col-span-1">
-              <input
-                type="text"
-                value={personalInfo.city}
-                onChange={(e) => onUpdate({ ...personalInfo, city: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 font-poppins text-gray35 bg-white shadow-sm hover:shadow-md"
-                placeholder="City"
-              />
-            </div>
-            <div className="md:col-span-1">
-              <input
-                type="text"
-                value={personalInfo.state}
-                onChange={(e) => onUpdate({ ...personalInfo, state: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 font-poppins text-gray35 bg-white shadow-sm hover:shadow-md"
-                placeholder="State"
-                maxLength={2}
-              />
-            </div>
-            <div className="md:col-span-1">
-              <input
-                type="text"
-                value={personalInfo.zipCode}
-                onChange={(e) => {
-                  const value = e.target.value.replace(/\D/g, '');
-                  onUpdate({ ...personalInfo, zipCode: value });
-                }}
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 font-poppins text-gray35 bg-white shadow-sm hover:shadow-md"
-                placeholder="ZIP Code"
-                maxLength={5}
-              />
-            </div>
           </div>
         </div>
-      </div>
+
 
       <div className="flex justify-between mt-12">
         <button
