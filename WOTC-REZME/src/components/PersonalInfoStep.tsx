@@ -46,14 +46,6 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
       newErrors.push('ZIP code is required');
     }
     
-    if (!personalInfo.state.trim()) {
-      newErrors.push('State is required');
-    }
-    
-    if (!personalInfo.zipCode.trim()) {
-      newErrors.push('ZIP code is required');
-    }
-    
     if (!personalInfo.county.trim()) {
       newErrors.push('County is required');
     }
@@ -101,7 +93,7 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
         </div>
         <h2 className="text-3xl font-semibold text-black mb-4 font-poppins">Personal Information</h2>
         <p className="text-gray35 font-poppins font-light text-lg leading-relaxed mb-2">
-          <strong className="text-black">Job applicant:</strong> Fill in the lines below and check any boxes that apply. Complete only this side.
+          <strong className="text-black">Job applicant:</strong> Please complete this page and continue.
         </p>
       </div>
 
@@ -420,9 +412,8 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
               </div>
             </div>
           </div>
-          </div>
         </div>
-
+      </div>
 
       <div className="flex justify-between mt-12">
         <button
