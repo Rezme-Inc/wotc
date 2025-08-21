@@ -199,9 +199,9 @@ export const DocumentUploadStep: React.FC<DocumentUploadStepProps> = ({
                 <span className="text-white text-sm font-bold">i</span>
               </div>
             </div>
-            <div>
+            <div className="text-center flex-1">
               <h4 className="font-medium text-blue-900 mb-2">Important Information</h4>
-              <ul className="text-sm text-blue-800 space-y-1 font-light">
+              <ul className="text-sm text-blue-800 space-y-1 font-light text-left inline-block">
                 <li>• Upload at least one document for each target group you selected</li>
                 <li>• Documents must be clear, legible, and verify your eligibility</li>
                 <li>• Accepted formats: PDF, JPG, PNG, DOC, DOCX, TXT (max 10MB each)</li>
