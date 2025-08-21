@@ -75,8 +75,8 @@ export const ImportantDatesStep: React.FC<ImportantDatesStepProps> = ({
               </p>
               <p className="text-gray35 font-poppins font-light leading-relaxed">
                 {userType === 'candidate' 
-                  ? 'These dates must be in chronological order: Gave Info ≤ Offered ≤ Hired ≤ Started'
-                  : 'For employers: Gave Info ≤ Offered, and both Hired & Started must be ≥ Gave Info and ≥ Offered'
+                  ? 'These dates must be in chronological order: 1. Gave Info → 2. Offered → 3. Hired → 4. Started'
+                  : 'For employers: 1. Gave Info → 2. Offered (both Hired & Started must come after steps 1 and 2)'
                 }
               </p>
             </div>
@@ -86,8 +86,8 @@ export const ImportantDatesStep: React.FC<ImportantDatesStepProps> = ({
         <div>
           <label className="block text-base font-medium text-black mb-3 font-poppins">
             {userType === 'candidate' 
-              ? 'Date You First Provided Target Group Information *'
-              : 'Date You Were First Provided Target Group Information *'
+              ? '1. Date You First Provided Target Group Information *'
+              : '1. Date You Were First Provided Target Group Information *'
             }
           </label>
           <input
@@ -98,8 +98,8 @@ export const ImportantDatesStep: React.FC<ImportantDatesStepProps> = ({
           />
           <p className="text-sm text-gray35 mt-2 font-poppins font-light leading-relaxed">
             {userType === 'candidate'
-              ? 'On what date did you first provide information to your employer that you belong to one of these targeted groups?'
-              : 'On what date did the candidate first provide information that they belong to one of these targeted groups?'
+              ? ' On what date did you first provide information to your employer that you belong to one of these targeted groups?'
+              : ' On what date did the candidate first provide information that they belong to one of these targeted groups?'
             }
           </p>
         </div>
@@ -107,8 +107,8 @@ export const ImportantDatesStep: React.FC<ImportantDatesStepProps> = ({
         <div>
           <label className="block text-base font-medium text-black mb-3 font-poppins">
             {userType === 'candidate'
-              ? 'Date You Were Offered This Position *'
-              : 'Date You Offered This Position *'
+              ? '2. Date You Were Offered This Position *'
+              : '2. Date You Offered This Position *'
             }
           </label>
           <input
@@ -119,8 +119,8 @@ export const ImportantDatesStep: React.FC<ImportantDatesStepProps> = ({
           />
           <p className="text-sm text-gray35 mt-2 font-poppins font-light leading-relaxed">
             {userType === 'candidate'
-              ? 'On what date were you offered this position?'
-              : 'On what date did you offer this position to the candidate?'
+              ? ' On what date were you offered this position?'
+              : ' On what date did you offer this position to the candidate?'
             }
           </p>
         </div>
@@ -128,8 +128,8 @@ export const ImportantDatesStep: React.FC<ImportantDatesStepProps> = ({
         <div>
           <label className="block text-base font-medium text-black mb-3 font-poppins">
             {userType === 'candidate'
-              ? 'Date You Were Hired *'
-              : 'Date Candidate Was Hired *'
+              ? '3. Date You Were Hired *'
+              : '3. Date Candidate Was Hired *'
             }
           </label>
           <input
@@ -149,8 +149,8 @@ export const ImportantDatesStep: React.FC<ImportantDatesStepProps> = ({
         <div>
           <label className="block text-base font-medium text-black mb-3 font-poppins">
             {userType === 'candidate'
-              ? 'Date You Started Work *'
-              : 'Date Candidate Started Work *'
+              ? '4. Date You Started Work *'
+              : '4. Date Candidate Started Work *'
             }
           </label>
           <input
