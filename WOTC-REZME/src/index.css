@@ -76,7 +76,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .form-input.is-invalid {
-  @apply border-red-500 focus:ring-red-500 focus:border-red-500;
+  @apply border-red-500 focus:ring-red-500 focus:border-red-500 bg-red-50 border-2;
 }
 
 .form-label {
@@ -97,7 +97,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .invalid-feedback {
-  @apply text-sm text-red-600 mt-1 font-poppins hidden;
+  @apply text-sm text-red-600 mt-1 font-poppins font-medium hidden;
 }
 
 .form-input.is-valid ~ .valid-feedback {
@@ -195,6 +195,37 @@ h1, h2, h3, h4, h5, h6 {
 
 .status-info {
   @apply status-badge bg-blue-50 text-blue-700 border border-blue-200;
+}
+
+/* Enhanced error banner styling */
+.error-banner {
+  @apply bg-red-50 border border-red-200 rounded-xl p-6 mb-8 shadow-sm;
+  @apply border-l-4 border-l-red-500;
+}
+
+.error-banner-header {
+  @apply text-red-800 font-semibold mb-3 font-poppins flex items-center;
+}
+
+.error-banner-list {
+  @apply space-y-2;
+}
+
+.error-banner-item {
+  @apply text-red-700 flex items-start font-poppins text-sm;
+}
+
+/* Field error container styling */
+.field-error-container {
+  @apply relative;
+}
+
+.field-error-icon {
+  @apply absolute right-3 top-1/2 transform -translate-y-1/2 text-red-500 w-5 h-5;
+}
+
+.field-error-text {
+  @apply text-sm text-red-600 mt-1 font-poppins font-medium;
 }
 
 /* Navigation and step indicators */

@@ -82,7 +82,7 @@ export const ValidationStep: React.FC<ValidationStepProps> = ({
               <p><strong className="font-medium text-black">Name:</strong> {formData.personalInfo.fullName}</p>
               <p><strong className="font-medium text-black">Date of Birth:</strong> {formatDate(formData.personalInfo.dateOfBirth)}</p>
               <p><strong className="font-medium text-black">Address:</strong> {formData.personalInfo.streetAddress}, {formData.personalInfo.city}, {formData.personalInfo.state} {formData.personalInfo.zipCode}</p>
-              <p><strong className="font-medium text-black">SSN (Last 4):</strong> ****{formData.personalInfo.ssnLastFour}</p>
+              <p><strong className="font-medium text-black">SSN:</strong> ***-**-{formData.personalInfo.socialSecurityNumber.slice(-4)}</p>
             </div>
           </div>
           
@@ -116,13 +116,16 @@ export const ValidationStep: React.FC<ValidationStepProps> = ({
       </div>
 
       {!dateValidation.isValid && (
-        <div className="bg-white border-l-4 border-cinnabar rounded-xl p-6 mb-8 shadow-sm">
-          <div className="flex items-start">
-            <AlertTriangle className="w-6 h-6 text-cinnabar mr-3 mt-0.5 flex-shrink-0" />
-            <div className="text-sm text-gray35 font-poppins">
-              <p className="font-medium mb-2 text-black">Action Required:</p>
-              <p className="font-light leading-relaxed">Please go back and correct the date issues before proceeding. The dates must be in chronological order and cannot be in the future.</p>
-            </div>
+        <div className="error-banner">
+          <h3 className="error-banner-header">
+            <AlertTriangle className="w-5 h-5 mr-3" />
+            Action Required:
+          </h3>
+          <div className="error-banner-list">
+            <p className="error-banner-item">
+              <span className="text-red-500 mr-2 font-bold">•</span>
+              Please go back and correct the date issues before proceeding. The dates must be in chronological order and cannot be in the future.
+            </p>
           </div>
         </div>
       )}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowRight, ArrowLeft, Calendar, AlertCircle } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Calendar, AlertCircle, AlertTriangle } from 'lucide-react';
 import { ImportantDates } from '../types/wotc';
 import { useValidation } from '../hooks/useValidation';
 
@@ -49,13 +49,17 @@ export const ImportantDatesStep: React.FC<ImportantDatesStepProps> = ({
       </div>
 
       {errors.length > 0 && (
-        <div className="bg-white border-l-4 border-cinnabar rounded-lg p-6 mb-8 shadow-sm">
-          <h3 className="text-black font-medium mb-3 font-poppins">
+        <div className="error-banner">
+          <h3 className="error-banner-header">
+            <AlertTriangle className="w-5 h-5 mr-3" />
             The following issues were found:
           </h3>
-          <ul className="list-disc list-inside text-gray35 text-sm space-y-2 font-poppins font-light">
+          <ul className="error-banner-list">
             {errors.map((error, index) => (
-              <li key={index}>{error}</li>
+              <li key={index} className="error-banner-item">
+                <span className="text-red-500 mr-2 font-bold">•</span>
+                {error}
+              </li>
             ))}
           </ul>
         </div>

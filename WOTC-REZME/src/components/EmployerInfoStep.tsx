@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowRight, ArrowLeft, Building2, Phone, FileText } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Building2, Phone, FileText, AlertTriangle } from 'lucide-react';
 
 interface EmployerInfo {
   companyName: string;
@@ -96,11 +96,17 @@ export const EmployerInfoStep: React.FC<EmployerInfoStepProps> = ({
       </div>
 
       {errors.length > 0 && (
-        <div className="bg-white border-l-4 border-cinnabar rounded-lg p-6 mb-8 shadow-sm">
-          <h3 className="text-black font-medium mb-3 font-poppins">Please correct the following:</h3>
-          <ul className="list-disc list-inside text-gray35 text-sm space-y-2 font-poppins font-light">
+        <div className="error-banner">
+          <h3 className="error-banner-header">
+            <AlertTriangle className="w-5 h-5 mr-3" />
+            Please correct the following errors:
+          </h3>
+          <ul className="error-banner-list">
             {errors.map((error, index) => (
-              <li key={index}>{error}</li>
+              <li key={index} className="error-banner-item">
+                <span className="text-red-500 mr-2 font-bold">•</span>
+                {error}
+              </li>
             ))}
           </ul>
         </div>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowRight, ArrowLeft, User } from 'lucide-react';
+import { ArrowRight, ArrowLeft, User, AlertCircle, AlertTriangle } from 'lucide-react';
 import { PersonalInfo } from '../types/wotc';
 
 interface PersonalInfoStepProps {
@@ -16,9 +16,11 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
   onPrevious
 }) => {
   const [errors, setErrors] = useState<string[]>([]);
+  const [fieldErrors, setFieldErrors] = useState<{[key: string]: boolean}>({});
 
   const validateAndProceed = () => {
     const newErrors: string[] = [];
+    const newFieldErrors: {[key: string]: boolean} = {};
     
     // Check all required fields and add validation classes
     const fullNameInput = document.getElementById('fullName') as HTMLInputElement;
@@ -42,77 +44,98 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
     if (!personalInfo.fullName.trim()) {
       newErrors.push('Your name is required');
       fullNameInput?.classList.add('is-invalid');
+      newFieldErrors.fullName = true;
     } else {
       fullNameInput?.classList.add('is-valid');
+      newFieldErrors.fullName = false;
     }
     
     if (!personalInfo.socialSecurityNumber.trim()) {
       newErrors.push('Social security number is required');
       ssnInput?.classList.add('is-invalid');
+      newFieldErrors.socialSecurityNumber = true;
     } else if (!/^\d{3}-?\d{2}-?\d{4}$/.test(personalInfo.socialSecurityNumber.replace(/\D/g, ''))) {
       newErrors.push('Social security number must be 9 digits');
       ssnInput?.classList.add('is-invalid');
+      newFieldErrors.socialSecurityNumber = true;
     } else {
       ssnInput?.classList.add('is-valid');
+      newFieldErrors.socialSecurityNumber = false;
     }
     
     if (!personalInfo.streetAddress.trim()) {
       newErrors.push('Street address is required');
       addressInput?.classList.add('is-invalid');
+      newFieldErrors.streetAddress = true;
     } else {
       addressInput?.classList.add('is-valid');
+      newFieldErrors.streetAddress = false;
     }
     
     if (!personalInfo.city.trim()) {
       newErrors.push('City is required');
       cityInput?.classList.add('is-invalid');
+      newFieldErrors.city = true;
     } else {
       cityInput?.classList.add('is-valid');
+      newFieldErrors.city = false;
     }
     
     if (!personalInfo.state.trim()) {
       newErrors.push('State is required');
       stateInput?.classList.add('is-invalid');
+      newFieldErrors.state = true;
     } else {
       stateInput?.classList.add('is-valid');
+      newFieldErrors.state = false;
     }
     
     if (!personalInfo.zipCode.trim()) {
       newErrors.push('ZIP code is required');
       zipInput?.classList.add('is-invalid');
+      newFieldErrors.zipCode = true;
     } else {
       zipInput?.classList.add('is-valid');
+      newFieldErrors.zipCode = false;
     }
     
     if (!personalInfo.county.trim()) {
       newErrors.push('County is required');
       countyInput?.classList.add('is-invalid');
+      newFieldErrors.county = true;
     } else {
       countyInput?.classList.add('is-valid');
+      newFieldErrors.county = false;
     }
     
     if (!personalInfo.telephoneNumber.trim()) {
       newErrors.push('Telephone number is required');
       phoneInput?.classList.add('is-invalid');
+      newFieldErrors.telephoneNumber = true;
     } else {
       phoneInput?.classList.add('is-valid');
+      newFieldErrors.telephoneNumber = false;
     }
     
     if (!personalInfo.dateOfBirth) {
       newErrors.push('Date of birth is required');
       dobInput?.classList.add('is-invalid');
+      newFieldErrors.dateOfBirth = true;
     } else {
       const birthDate = new Date(personalInfo.dateOfBirth);
       const today = new Date();
       if (birthDate > today) {
         newErrors.push('Date of birth cannot be in the future');
         dobInput?.classList.add('is-invalid');
+        newFieldErrors.dateOfBirth = true;
       } else {
         dobInput?.classList.add('is-valid');
+        newFieldErrors.dateOfBirth = false;
       }
     }
     
     setErrors(newErrors);
+    setFieldErrors(newFieldErrors);
     
     if (newErrors.length === 0) {
       // Add a small delay to show the validation feedback, then proceed
@@ -149,15 +172,15 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
       </div>
 
       {errors.length > 0 && (
-        <div className="card border-l-4 border-cinnabar p-6 mb-8 bg-red-50">
-          <h3 className="text-black font-medium mb-3 font-poppins flex items-center">
-            <span className="w-2 h-2 bg-cinnabar rounded-full mr-3"></span>
-            Please correct the following:
+        <div className="error-banner">
+          <h3 className="error-banner-header">
+            <AlertTriangle className="w-5 h-5 mr-3" />
+            Please correct the following errors:
           </h3>
-          <ul className="space-y-2">
+          <ul className="error-banner-list">
             {errors.map((error, index) => (
-              <li key={index} className="form-error flex items-start">
-                <span className="text-cinnabar mr-2">•</span>
+              <li key={index} className="error-banner-item">
+                <span className="text-red-500 mr-2 font-bold">•</span>
                 {error}
               </li>
             ))}
@@ -174,15 +197,20 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
               <label htmlFor="fullName" className="form-label">
                 Your name *
               </label>
-              <input
-                type="text"
-                className="form-input"
-                id="fullName"
-                value={personalInfo.fullName}
-                onChange={(e) => onUpdate({ ...personalInfo, fullName: e.target.value })}
-                placeholder="Enter your full legal name"
-                required
-              />
+              <div className="field-error-container">
+                <input
+                  type="text"
+                  className="form-input"
+                  id="fullName"
+                  value={personalInfo.fullName}
+                  onChange={(e) => onUpdate({ ...personalInfo, fullName: e.target.value })}
+                  placeholder="Enter your full legal name"
+                  required
+                />
+                {fieldErrors.fullName && (
+                  <AlertCircle className="field-error-icon" />
+                )}
+              </div>
               <div className="valid-feedback">
                 Looks good!
               </div>
@@ -198,19 +226,24 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
               <label htmlFor="socialSecurityNumber" className="form-label">
                 Social security number ▶ *
               </label>
-              <input
-                type="text"
-                className="form-input"
-                id="socialSecurityNumber"
-                value={personalInfo.socialSecurityNumber}
-                onChange={(e) => {
-                  const formatted = formatSSN(e.target.value);
-                  onUpdate({ ...personalInfo, socialSecurityNumber: formatted });
-                }}
-                placeholder="XXX-XX-XXXX"
-                maxLength={11}
-                required
-              />
+              <div className="field-error-container">
+                <input
+                  type="text"
+                  className="form-input"
+                  id="socialSecurityNumber"
+                  value={personalInfo.socialSecurityNumber}
+                  onChange={(e) => {
+                    const formatted = formatSSN(e.target.value);
+                    onUpdate({ ...personalInfo, socialSecurityNumber: formatted });
+                  }}
+                  placeholder="XXX-XX-XXXX"
+                  maxLength={11}
+                  required
+                />
+                {fieldErrors.socialSecurityNumber && (
+                  <AlertCircle className="field-error-icon" />
+                )}
+              </div>
               <div className="valid-feedback">
                 Looks good!
               </div>
@@ -227,15 +260,20 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
               <label htmlFor="streetAddress" className="form-label">
                 Street address where you live *
               </label>
-              <input
-                type="text"
-                className="form-input"
-                id="streetAddress"
-                value={personalInfo.streetAddress}
-                onChange={(e) => onUpdate({ ...personalInfo, streetAddress: e.target.value })}
-                placeholder="Enter your street address"
-                required
-              />
+              <div className="field-error-container">
+                <input
+                  type="text"
+                  className="form-input"
+                  id="streetAddress"
+                  value={personalInfo.streetAddress}
+                  onChange={(e) => onUpdate({ ...personalInfo, streetAddress: e.target.value })}
+                  placeholder="Enter your street address"
+                  required
+                />
+                {fieldErrors.streetAddress && (
+                  <AlertCircle className="field-error-icon" />
+                )}
+              </div>
               <div className="valid-feedback">
                 Looks good!
               </div>
@@ -249,15 +287,20 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
               <label htmlFor="city" className="form-label">
                 City *
               </label>
-              <input
-                type="text"
-                className="form-input"
-                id="city"
-                value={personalInfo.city}
-                onChange={(e) => onUpdate({ ...personalInfo, city: e.target.value })}
-                placeholder="City"
-                required
-              />
+              <div className="field-error-container">
+                <input
+                  type="text"
+                  className="form-input"
+                  id="city"
+                  value={personalInfo.city}
+                  onChange={(e) => onUpdate({ ...personalInfo, city: e.target.value })}
+                  placeholder="City"
+                  required
+                />
+                {fieldErrors.city && (
+                  <AlertCircle className="field-error-icon" />
+                )}
+              </div>
               <div className="valid-feedback">
                 Looks good!
               </div>
@@ -270,16 +313,21 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
               <label htmlFor="state" className="form-label">
                 State *
               </label>
-              <input
-                type="text"
-                className="form-input"
-                id="state"
-                value={personalInfo.state}
-                onChange={(e) => onUpdate({ ...personalInfo, state: e.target.value.toUpperCase() })}
-                placeholder="State"
-                maxLength={2}
-                required
-              />
+              <div className="field-error-container">
+                <input
+                  type="text"
+                  className="form-input"
+                  id="state"
+                  value={personalInfo.state}
+                  onChange={(e) => onUpdate({ ...personalInfo, state: e.target.value.toUpperCase() })}
+                  placeholder="State"
+                  maxLength={2}
+                  required
+                />
+                {fieldErrors.state && (
+                  <AlertCircle className="field-error-icon" />
+                )}
+              </div>
               <div className="valid-feedback">
                 Looks good!
               </div>
@@ -292,19 +340,24 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
               <label htmlFor="zipCode" className="form-label">
                 ZIP Code *
               </label>
-              <input
-                type="text"
-                className="form-input"
-                id="zipCode"
-                value={personalInfo.zipCode}
-                onChange={(e) => {
-                  const value = e.target.value.replace(/\D/g, '');
-                  onUpdate({ ...personalInfo, zipCode: value });
-                }}
-                placeholder="ZIP Code"
-                maxLength={5}
-                required
-              />
+              <div className="field-error-container">
+                <input
+                  type="text"
+                  className="form-input"
+                  id="zipCode"
+                  value={personalInfo.zipCode}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\D/g, '');
+                    onUpdate({ ...personalInfo, zipCode: value });
+                  }}
+                  placeholder="ZIP Code"
+                  maxLength={5}
+                  required
+                />
+                {fieldErrors.zipCode && (
+                  <AlertCircle className="field-error-icon" />
+                )}
+              </div>
               <div className="valid-feedback">
                 Looks good!
               </div>
@@ -318,15 +371,20 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
               <label htmlFor="county" className="form-label">
                 County *
               </label>
-              <input
-                type="text"
-                className="form-input"
-                id="county"
-                value={personalInfo.county}
-                onChange={(e) => onUpdate({ ...personalInfo, county: e.target.value })}
-                placeholder="Enter your county"
-                required
-              />
+              <div className="field-error-container">
+                <input
+                  type="text"
+                  className="form-input"
+                  id="county"
+                  value={personalInfo.county}
+                  onChange={(e) => onUpdate({ ...personalInfo, county: e.target.value })}
+                  placeholder="Enter your county"
+                  required
+                />
+                {fieldErrors.county && (
+                  <AlertCircle className="field-error-icon" />
+                )}
+              </div>
               <div className="valid-feedback">
                 Looks good!
               </div>
@@ -339,19 +397,24 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
               <label htmlFor="telephoneNumber" className="form-label">
                 Telephone number *
               </label>
-              <input
-                type="text"
-                className="form-input"
-                id="telephoneNumber"
-                value={personalInfo.telephoneNumber}
-                onChange={(e) => {
-                  const formatted = formatPhone(e.target.value);
-                  onUpdate({ ...personalInfo, telephoneNumber: formatted });
-                }}
-                placeholder="(XXX) XXX-XXXX"
-                maxLength={14}
-                required
-              />
+              <div className="field-error-container">
+                <input
+                  type="text"
+                  className="form-input"
+                  id="telephoneNumber"
+                  value={personalInfo.telephoneNumber}
+                  onChange={(e) => {
+                    const formatted = formatPhone(e.target.value);
+                    onUpdate({ ...personalInfo, telephoneNumber: formatted });
+                  }}
+                  placeholder="(XXX) XXX-XXXX"
+                  maxLength={14}
+                  required
+                />
+                {fieldErrors.telephoneNumber && (
+                  <AlertCircle className="field-error-icon" />
+                )}
+              </div>
               <div className="valid-feedback">
                 Looks good!
               </div>
@@ -365,14 +428,19 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
               <label htmlFor="dateOfBirth" className="form-label">
                 Enter your date of birth (month, day, year) *
               </label>
-              <input
-                type="date"
-                className="form-input"
-                id="dateOfBirth"
-                value={personalInfo.dateOfBirth}
-                onChange={(e) => onUpdate({ ...personalInfo, dateOfBirth: e.target.value })}
-                required
-              />
+              <div className="field-error-container">
+                <input
+                  type="date"
+                  className="form-input"
+                  id="dateOfBirth"
+                  value={personalInfo.dateOfBirth}
+                  onChange={(e) => onUpdate({ ...personalInfo, dateOfBirth: e.target.value })}
+                  required
+                />
+                {fieldErrors.dateOfBirth && (
+                  <AlertCircle className="field-error-icon" />
+                )}
+              </div>
               <div className="valid-feedback">
                 Looks good!
               </div>
