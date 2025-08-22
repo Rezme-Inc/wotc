@@ -185,7 +185,11 @@ export const EmployerInfoStep: React.FC<EmployerInfoStepProps> = ({
       hourlyWageInput?.classList.add('is-invalid');
       newFieldErrors.hourlyWage = true;
     } else if (parseFloat(employerInfo.hourlyWage) <= 0) {
-      newErrors.push('Hourly wage must be greater than 0');
+      newErrors.push('Hourly wage must be greater than $0.00');
+      hourlyWageInput?.classList.add('is-invalid');
+      newFieldErrors.hourlyWage = true;
+    } else if (parseFloat(employerInfo.hourlyWage) < 7.25) {
+      newErrors.push('Hourly wage should be at least federal minimum wage ($7.25)');
       hourlyWageInput?.classList.add('is-invalid');
       newFieldErrors.hourlyWage = true;
     } else {
@@ -228,6 +232,46 @@ export const EmployerInfoStep: React.FC<EmployerInfoStepProps> = ({
     if (digits.length <= 3) return digits;
     if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
     return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
+  };
+
+  const formatWage = (value: string) => {
+    // Remove all non-digit and non-decimal characters
+    let cleaned = value.replace(/[^0-9.]/g, '');
+    
+    // Handle empty input
+    if (!cleaned) return '';
+    
+    // Handle just a decimal point
+    if (cleaned === '.') return '0.';
+    
+    // Ensure only one decimal point
+    const parts = cleaned.split('.');
+    if (parts.length > 2) {
+      cleaned = parts[0] + '.' + parts[1];
+    }
+    
+    // Limit whole number part to 3 digits (max $999)
+    if (parts[0] && parts[0].length > 3) {
+      parts[0] = parts[0].slice(0, 3);
+    }
+    
+    // Limit decimal places to 2
+    if (parts.length === 2) {
+      if (parts[1] && parts[1].length > 2) {
+        parts[1] = parts[1].slice(0, 2);
+      }
+      cleaned = parts[0] + '.' + (parts[1] || '');
+    } else {
+      cleaned = parts[0];
+    }
+    
+    // Final check for max value
+    const numValue = parseFloat(cleaned);
+    if (!isNaN(numValue) && numValue > 999.99) {
+      cleaned = '999.99';
+    }
+    
+    return cleaned;
   };
 
   return (
@@ -623,16 +667,18 @@ export const EmployerInfoStep: React.FC<EmployerInfoStepProps> = ({
               </label>
               <div className="field-error-container">
                 <div className="relative">
-                  <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray35 font-poppins">$</span>
+                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 font-poppins font-medium pointer-events-none z-10">$</span>
                   <input
-                    type="number"
-                    step="0.01"
-                    className="form-input pl-8"
+                    type="text"
+                    className="form-input"
+                    style={{ paddingLeft: '2rem' }}
                     id="hourlyWage"
                     value={employerInfo.hourlyWage}
-                    onChange={(e) => onUpdate({ ...employerInfo, hourlyWage: e.target.value })}
-                    placeholder="0.00"
-                    min="0.01"
+                    onChange={(e) => {
+                      const formatted = formatWage(e.target.value);
+                      onUpdate({ ...employerInfo, hourlyWage: formatted });
+                    }}
+                    placeholder="15.00"
                     required
                   />
                 </div>
@@ -644,7 +690,10 @@ export const EmployerInfoStep: React.FC<EmployerInfoStepProps> = ({
                 Looks good!
               </div>
               <div className="invalid-feedback">
-                Please provide a valid hourly wage.
+                Please provide a valid hourly wage ($7.25 - $999.99).
+              </div>
+              <div className="form-hint">
+                Enter hourly wage in dollars and cents (e.g., 15.50)
               </div>
             </div>
 
@@ -658,7 +707,16 @@ export const EmployerInfoStep: React.FC<EmployerInfoStepProps> = ({
                   className="form-input"
                   id="hoursPerWeek"
                   value={employerInfo.hoursPerWeek}
-                  onChange={(e) => onUpdate({ ...employerInfo, hoursPerWeek: e.target.value })}
+                  onChange={(e) => {
+                    const value = parseInt(e.target.value);
+                    if (isNaN(value) || value < 0) {
+                      onUpdate({ ...employerInfo, hoursPerWeek: '' });
+                    } else if (value > 80) {
+                      onUpdate({ ...employerInfo, hoursPerWeek: '80' });
+                    } else {
+                      onUpdate({ ...employerInfo, hoursPerWeek: e.target.value });
+                    }
+                  }}
                   placeholder="40"
                   min="1"
                   max="80"
@@ -673,6 +731,9 @@ export const EmployerInfoStep: React.FC<EmployerInfoStepProps> = ({
               </div>
               <div className="invalid-feedback">
                 Please provide valid hours per week (1-80).
+              </div>
+              <div className="form-hint">
+                Standard full-time is 40 hours per week
               </div>
             </div>
           </div>
