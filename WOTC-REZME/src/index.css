@@ -128,15 +128,15 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .step-complete {
-  @apply bg-cinnabar text-white shadow-md;
+  @apply bg-green-600 text-white shadow-sm;
 }
 
 .step-current {
-  @apply bg-black text-white shadow-md ring-2 ring-black ring-opacity-20;
+  @apply bg-orange-500 text-white shadow-lg ring-2 ring-orange-300;
 }
 
 .step-pending {
-  @apply bg-gray-100 text-gray35 border border-gray-200;
+  @apply bg-gray-400 text-white shadow-sm;
 }
 
 /* Layout containers */

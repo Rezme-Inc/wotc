@@ -42,10 +42,10 @@ export const StepIndicator: React.FC<StepIndicatorProps> = ({ currentStep, total
                 <div
                   className={`w-12 h-12 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-200 ${
                     isCompleted
-                      ? 'bg-cinnabar text-white shadow-md'
+                      ? 'bg-green-600 text-white shadow-sm'
                       : isCurrent
-                      ? 'bg-black text-white shadow-md'
-                      : 'bg-gray-100 text-gray35 border border-gray-200'
+                      ? 'bg-orange-500 text-white shadow-lg ring-2 ring-orange-300'
+                      : 'bg-gray-400 text-white shadow-sm'
                   }`}
                 >
                   {isCompleted ? <Check size={18} /> : stepNumber}
@@ -57,7 +57,7 @@ export const StepIndicator: React.FC<StepIndicatorProps> = ({ currentStep, total
               {index < totalSteps - 1 && (
                 <div
                   className={`flex-1 h-0.5 mx-6 transition-colors duration-200 ${
-                    isCompleted ? 'bg-cinnabar' : 'bg-gray-200'
+                    isCompleted ? 'bg-green-600' : 'bg-gray-200'
                   }`}
                 />
               )}
