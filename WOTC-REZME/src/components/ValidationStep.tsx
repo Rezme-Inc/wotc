@@ -32,7 +32,7 @@ export const ValidationStep: React.FC<ValidationStepProps> = ({
         <h2 className="text-3xl font-semibold text-black mb-4 font-poppins">Validation Results</h2>
         <p className="text-gray35 font-poppins font-light text-lg leading-relaxed">
           {userType === 'candidate' 
-            ? "Thank you. I'm now checking that: 1) Gave Info ≤ Offered Job ≤ Hired ≤ Started Work. If any dates are out of order, I'll ask you to revise."
+            ? "Thank you. I'm now checking that: 1. Gave Info → 2. Offered → 3. Hired → 4. Started. If any dates are out of order, I'll ask you to revise."
             : "Thank you. I'm now validating the employment dates to ensure compliance with WOTC requirements. If any dates are inconsistent, I'll ask you to revise."
           }
         </p>
