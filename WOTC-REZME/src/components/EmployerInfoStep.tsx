@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowRight, ArrowLeft, Building2, Phone, FileText, AlertTriangle, AlertCircle } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Building2, Phone, FileText, AlertTriangle, AlertCircle, Info } from 'lucide-react';
 
 interface EmployerInfo {
   companyName: string;
@@ -33,6 +33,7 @@ export const EmployerInfoStep: React.FC<EmployerInfoStepProps> = ({
 }) => {
   const [errors, setErrors] = useState<string[]>([]);
   const [fieldErrors, setFieldErrors] = useState<{[key: string]: boolean}>({});
+  const [showEINTooltip, setShowEINTooltip] = useState(false);
 
   const validateAndProceed = () => {
     const newErrors: string[] = [];
@@ -341,7 +342,37 @@ export const EmployerInfoStep: React.FC<EmployerInfoStepProps> = ({
             <div className="col-md-6">
               <label htmlFor="employerEIN" className="form-label">
                 Employer EIN *
+                <button
+                  type="button"
+                  onClick={() => setShowEINTooltip(!showEINTooltip)}
+                  className="ml-2 inline-flex items-center justify-center w-4 h-4 text-blue-600 hover:text-blue-800 transition-colors"
+                  aria-label="Information about Employer EIN"
+                >
+                  <Info className="w-4 h-4" />
+                </button>
               </label>
+              {showEINTooltip && (
+                <div className="relative mb-3">
+                  <div className="absolute top-0 left-0 z-50 w-full max-w-md p-4 bg-blue-50 border border-blue-200 rounded-lg shadow-lg">
+                    <div className="flex justify-between items-start mb-2">
+                      <h4 className="font-semibold text-blue-900 text-sm">Employer Identification Number (EIN)</h4>
+                      <button
+                        type="button"
+                        onClick={() => setShowEINTooltip(false)}
+                        className="text-blue-600 hover:text-blue-800 ml-2"
+                        aria-label="Close EIN information"
+                      >
+                        ×
+                      </button>
+                    </div>
+                    <p className="text-blue-800 text-sm leading-relaxed">
+                      An Employer Identification Number (EIN) is a 9-digit number issued by the IRS. 
+                      You can find it on official IRS letters, past tax returns, or by logging into 
+                      your IRS account.
+                    </p>
+                  </div>
+                </div>
+              )}
               <div className="field-error-container">
                 <input
                   type="text"
