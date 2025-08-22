@@ -464,10 +464,10 @@ export const DocumentUploadStep: React.FC<DocumentUploadStepProps> = ({
         <button
           onClick={onNext}
           disabled={!canProceed}
-          className={`px-8 py-3 rounded-xl font-medium transition-all duration-200 ${
+          className={`flex items-center px-10 py-4 font-poppins ${
             canProceed
-              ? 'bg-black text-white hover:bg-gray-800 shadow-md hover:shadow-lg transform hover:-translate-y-0.5'
-              : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+              ? 'btn-primary'
+              : 'bg-gray-200 text-gray35 cursor-not-allowed rounded-xl font-medium'
           }`}
         >
           Continue →

@@ -346,7 +346,7 @@ export const EmployerInfoStep: React.FC<EmployerInfoStepProps> = ({
         </button>
         <button
           onClick={validateAndProceed}
-          className="bg-black hover:bg-gray-800 text-white font-medium py-4 px-10 rounded-xl transition-all duration-200 flex items-center font-poppins shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+          className="btn-primary flex items-center px-10 py-4"
         >
           Continue
           <ArrowRight className="ml-3 w-5 h-5" />

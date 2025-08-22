@@ -138,10 +138,10 @@ export const ValidationStep: React.FC<ValidationStepProps> = ({
         <button
           onClick={onNext}
           disabled={!dateValidation.isValid}
-          className={`font-medium py-4 px-10 rounded-xl transition-all duration-200 flex items-center font-poppins ${
+          className={`flex items-center px-10 py-4 font-poppins ${
             dateValidation.isValid
-              ? 'bg-black hover:bg-gray-800 text-white shadow-md hover:shadow-lg transform hover:-translate-y-0.5'
-              : 'bg-gray-200 text-gray35 cursor-not-allowed'
+              ? 'btn-primary'
+              : 'bg-gray-200 text-gray35 cursor-not-allowed rounded-xl font-medium'
           }`}
         >
           {dateValidation.isValid ? 'Proceed to Completion' : 'Fix Errors First'}
