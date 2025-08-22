@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CheckCircle, Download, FileText, FileSignature as Signature } from 'lucide-react';
+import { Download, FileText, FileSignature as Signature, AlertCircle, AlertTriangle } from 'lucide-react';
 import { WOTCFormData } from '../types/wotc';
 import { formatDate } from '../utils/dateValidation';
 
@@ -33,23 +33,35 @@ export const CompletionStep: React.FC<CompletionStepProps> = ({
   const [signatureDate, setSignatureDate] = useState(new Date().toISOString().split('T')[0]);
   const [isAgreed, setIsAgreed] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
+  const [fieldErrors, setFieldErrors] = useState<{[key: string]: boolean}>({});
 
-  const handleSubmit = () => {
+    const handleSubmit = () => {
     const newErrors: string[] = [];
-    
+    const newFieldErrors: {[key: string]: boolean} = {};
+
     if (!signature.trim()) {
       newErrors.push(`${formData.userType === 'employer' ? 'Employer' : 'Electronic'} signature is required`);
+      newFieldErrors.signature = true;
+    } else {
+      newFieldErrors.signature = false;
     }
-    
+
     if (!signatureDate) {
       newErrors.push('Signature date is required');
+      newFieldErrors.signatureDate = true;
+    } else {
+      newFieldErrors.signatureDate = false;
     }
-    
+
     if (!isAgreed) {
       newErrors.push(`You must agree to the ${formData.userType === 'employer' ? 'employer' : ''} certification statement`);
+      newFieldErrors.isAgreed = true;
+    } else {
+      newFieldErrors.isAgreed = false;
     }
-    
+
     setErrors(newErrors);
+    setFieldErrors(newFieldErrors);
     
     if (newErrors.length === 0) {
       onComplete();
@@ -102,11 +114,17 @@ export const CompletionStep: React.FC<CompletionStepProps> = ({
       </div>
 
       {errors.length > 0 && (
-        <div className="bg-white border-l-4 border-cinnabar rounded-lg p-6 mb-8 shadow-sm">
-          <h3 className="text-black font-medium mb-3 font-poppins">Please complete the following:</h3>
-          <ul className="list-disc list-inside text-gray35 text-sm space-y-2 font-poppins font-light">
+        <div className="error-banner">
+          <h3 className="error-banner-header">
+            <AlertTriangle className="w-5 h-5 mr-3" />
+            Please complete the following:
+          </h3>
+          <ul className="error-banner-list">
             {errors.map((error, index) => (
-              <li key={index}>{error}</li>
+              <li key={index} className="error-banner-item">
+                <span className="text-red-500 mr-2 font-bold">•</span>
+                {error}
+              </li>
             ))}
           </ul>
         </div>
@@ -404,7 +422,7 @@ export const CompletionStep: React.FC<CompletionStepProps> = ({
               <div className="flex items-center mr-4">
                 <span className="font-bold mr-3">3</span>
                 <div className="w-4 h-4 border border-gray-400 flex items-center justify-center">
-                  {formData.personalInfo.veteranUnemployed6Months && <span className="text-xs">✓</span>}
+                  {formData.personalInfo.veteranUnemployed4to6Months && <span className="text-xs">✓</span>}
                 </div>
               </div>
               <div className="flex-1 text-xs leading-relaxed">
@@ -517,25 +535,35 @@ export const CompletionStep: React.FC<CompletionStepProps> = ({
                 : 'To complete your section, please type your full legal name as an electronic signature under penalties of perjury *'
               }
             </label>
-            <input
-              type="text"
-              value={signature}
-              onChange={(e) => setSignature(e.target.value)}
-              className="w-full px-5 py-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 font-poppins text-gray35 bg-white shadow-sm hover:shadow-md"
-              placeholder="Type your full legal name here"
-            />
+            <div className="field-error-container">
+              <input
+                type="text"
+                value={signature}
+                onChange={(e) => setSignature(e.target.value)}
+                className="w-full px-5 py-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 font-poppins text-gray35 bg-white shadow-sm hover:shadow-md"
+                placeholder="Type your full legal name here"
+              />
+              {fieldErrors.signature && (
+                <AlertCircle className="field-error-icon" />
+              )}
+            </div>
           </div>
           
           <div>
             <label className="block text-base font-medium text-black mb-3 font-poppins">
               Signature Date *
             </label>
-            <input
-              type="date"
-              value={signatureDate}
-              onChange={(e) => setSignatureDate(e.target.value)}
-              className="w-full px-5 py-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 font-poppins text-gray35 bg-white shadow-sm hover:shadow-md"
-            />
+            <div className="field-error-container">
+              <input
+                type="date"
+                value={signatureDate}
+                onChange={(e) => setSignatureDate(e.target.value)}
+                className="w-full px-5 py-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 font-poppins text-gray35 bg-white shadow-sm hover:shadow-md"
+              />
+              {fieldErrors.signatureDate && (
+                <AlertCircle className="field-error-icon" />
+              )}
+            </div>
           </div>
           
           <div className="flex items-start">
