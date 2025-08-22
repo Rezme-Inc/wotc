@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowRight, ArrowLeft, Building2, MapPin, Phone, Calendar, FileText } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Building2, Phone, FileText } from 'lucide-react';
 
 interface EmployerInfo {
   companyName: string;
@@ -34,6 +34,7 @@ export const EmployerInfoStep: React.FC<EmployerInfoStepProps> = ({
   const [errors, setErrors] = useState<string[]>([]);
 
   const validateAndProceed = () => {
+    const form = document.querySelector('.needs-validation') as HTMLFormElement;
     const newErrors: string[] = [];
     
     if (!employerInfo.companyName.trim()) newErrors.push('Company name is required');
@@ -53,7 +54,18 @@ export const EmployerInfoStep: React.FC<EmployerInfoStepProps> = ({
     
     setErrors(newErrors);
     
-    if (newErrors.length === 0) {
+    // Add Bootstrap validation classes
+    if (form) {
+      if (newErrors.length === 0) {
+        form.classList.add('was-validated');
+        // Add a small delay to show the validation feedback, then proceed
+        setTimeout(() => {
+          onNext();
+        }, 500);
+      } else {
+        form.classList.add('was-validated');
+      }
+    } else if (newErrors.length === 0) {
       onNext();
     }
   };
