@@ -42,7 +42,7 @@ export const StepIndicator: React.FC<StepIndicatorProps> = ({ currentStep, total
                 <div
                   className={`w-12 h-12 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-200 ${
                     isCompleted
-                      ? 'bg-green-600 text-white shadow-sw'
+                      ? 'bg-green-600 text-white shadow-sm'
                       : isCurrent
                       ? 'bg-orange-500 text-white shadow-lg ring-2 ring-orange-300'
                       : 'bg-gray-400 text-white shadow-sm'

@@ -9,7 +9,7 @@ export const Footer: React.FC = () => {
           <div className="space-y-4">
             <div className="flex flex-col">
               <div className="flex items-center">
-                <span className="text-2=4xl font-bold text-black font-poppins">réz</span>
+                <span className="text-4xl font-bold text-black font-poppins">réz</span>
                 <span className="text-4xl font-bold text-cinnabar font-poppins">me</span>
                 <span className="text-cinnabar text-4xl font-bold">.</span>
               </div>
