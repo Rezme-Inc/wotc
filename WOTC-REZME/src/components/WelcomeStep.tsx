@@ -1,5 +1,5 @@
-import React from 'react';
-import { User, Building2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { User, Building2, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface WelcomeStepProps {
   onNext: () => void;
@@ -14,6 +14,7 @@ export const WelcomeStep: React.FC<WelcomeStepProps> = ({
   onUserTypeChange, 
   onLoginToDashboard 
 }) => {
+  const [showAbout, setShowAbout] = useState(false);
   return (
     <div className="max-w-4xl mx-auto text-center section-spacing">
       {/* Getting Started Section */}
@@ -31,12 +32,9 @@ export const WelcomeStep: React.FC<WelcomeStepProps> = ({
 
       {/* User Type Toggle */}
       <div className="mb-12">
-        <h2 className="text-2xl font-semibold text-black mb-4 font-poppins">
+        <h2 className="text-2xl font-semibold text-black mb-8 font-poppins">
           Who is filling out this form?
         </h2>
-        <p className="text-gray35 mb-6 font-poppins">
-          Choose the option that best describes you:
-        </p>
         <div className="card inline-flex p-2 bg-gray-50 border-gray-200">
           <button
             onClick={() => onUserTypeChange('candidate')}
@@ -157,15 +155,30 @@ export const WelcomeStep: React.FC<WelcomeStepProps> = ({
       </div>
 
       {/* Additional information */}
-      <div className="mt-12 card p-6 bg-blue-50 border-blue-200 max-w-2xl mx-auto">
-        <h4 className="text-base font-semibold text-black mb-3 font-poppins">
-          About the Work Opportunity Tax Credit
-        </h4>
-        <p className="text-sm text-gray35 font-poppins leading-relaxed">
-          The WOTC program provides federal tax credits to employers who hire individuals 
-          from certain target groups that have consistently faced significant barriers to 
-          employment. Credits can range from $1,200 to $9,600 per qualified employee.
-        </p>
+      <div className="mt-12 max-w-2xl mx-auto">
+        <button
+          onClick={() => setShowAbout(!showAbout)}
+          className="flex items-center justify-center w-full p-4 text-sm text-gray35 hover:text-black transition-colors duration-200 focus-visible"
+          aria-expanded={showAbout}
+          aria-label="Toggle Work Opportunity Tax Credit information"
+        >
+          <span className="font-medium">About the Work Opportunity Tax Credit</span>
+          {showAbout ? (
+            <ChevronUp className="w-4 h-4 ml-2" />
+          ) : (
+            <ChevronDown className="w-4 h-4 ml-2" />
+          )}
+        </button>
+        
+        {showAbout && (
+          <div className="card p-6 bg-blue-50 border-blue-200 animate-fade-in">
+            <p className="text-sm text-gray35 font-poppins leading-relaxed">
+              The WOTC program provides federal tax credits to employers who hire individuals 
+              from certain target groups that have consistently faced significant barriers to 
+              employment. Credits can range from $1,200 to $9,600 per qualified employee.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
