@@ -9,11 +9,11 @@ export const Header: React.FC = () => {
           <div className="flex items-center">
             <div className="flex flex-col">
               <div className="flex items-center">
-                <span className="text-2xl font-bold text-black font-poppins">réz</span>
-                <span className="text-2xl font-bold text-cinnabar font-poppins">me</span>
-                <span className="text-cinnabar text-2xl font-bold">.</span>
+                <span className="text-4xl font-bold text-black font-poppins">réz</span>
+                <span className="text-4xl font-bold text-cinnabar font-poppins">me</span>
+                <span className="text-cinnabar text-4xl font-bold">.</span>
               </div>
-              <span className="text-[6px] font-medium text-black font-poppins mt-0.5 leading-none tracking-tighter text-center block">
+              <span className="text-xs font-medium text-black font-poppins mt-1 leading-none tracking-tighter text-center block">
                 Tax Credit Management
               </span>
             </div>
