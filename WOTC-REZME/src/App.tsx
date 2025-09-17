@@ -13,7 +13,7 @@ import DocumentUploadStep from './components/DocumentUploadStep';
 import { EmployerDashboard } from './components/EmployerDashboard';
 import { Footer } from './components/Footer';
 import { Header } from './components/Header';
-import { CheckCircle, FileText } from 'lucide-react';
+import { CheckCircle } from 'lucide-react';
 
 function AppRefactored() {
   const {
@@ -66,11 +66,21 @@ function AppRefactored() {
           {/* Header */}
           <header className="text-center mb-12">
             <h1 className="text-4xl font-semibold text-black mb-4 font-poppins">
-              Rézme WOTC Compliance Assistant
+              Get Your Tax Credit Application Started
             </h1>
             <p className="text-gray35 font-poppins font-light text-lg max-w-2xl mx-auto">
-              Work Opportunity Tax Credit {formData.userType === 'candidate' ? 'Pre-Screening' : 'Employer'} Portal
+              Help your employer save money by completing this quick form
             </p>
+            <div className="mt-4 flex items-center justify-center gap-6 text-sm text-gray35">
+              <div className="flex items-center">
+                <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                <span>Takes 5-10 minutes</span>
+              </div>
+              <div className="flex items-center">
+                <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                <span>Could save employer $1,200-$9,600</span>
+              </div>
+            </div>
           </header>
 
           {/* Step Indicator */}

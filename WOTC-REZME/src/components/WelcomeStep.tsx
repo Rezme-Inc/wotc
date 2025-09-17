@@ -16,15 +16,51 @@ export const WelcomeStep: React.FC<WelcomeStepProps> = ({
 }) => {
   return (
     <div className="max-w-4xl mx-auto text-center section-spacing">
+      {/* Getting Started Section */}
+      <div className="mb-12 card p-8 bg-blue-50 border-blue-200">
+        <h2 className="text-2xl font-semibold text-black mb-4 font-poppins">
+          🎯 Getting Started - 3 Simple Steps
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          <div className="text-center">
+            <div className="w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center mx-auto mb-3 text-lg font-semibold">
+              1
+            </div>
+            <h3 className="font-semibold text-black mb-2">Tell us about yourself</h3>
+            <p className="text-sm text-gray35">2-3 minutes</p>
+          </div>
+          <div className="text-center">
+            <div className="w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center mx-auto mb-3 text-lg font-semibold">
+              2
+            </div>
+            <h3 className="font-semibold text-black mb-2">Upload a few documents</h3>
+            <p className="text-sm text-gray35">2-3 minutes</p>
+          </div>
+          <div className="text-center">
+            <div className="w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center mx-auto mb-3 text-lg font-semibold">
+              3
+            </div>
+            <h3 className="font-semibold text-black mb-2">Review and submit</h3>
+            <p className="text-sm text-gray35">1-2 minutes</p>
+          </div>
+        </div>
+        <p className="text-gray35 font-poppins">
+          Your employer will receive everything they need to apply for tax credits on your behalf.
+        </p>
+      </div>
+
       {/* User Type Toggle */}
       <div className="mb-12">
-        <h2 className="text-2xl font-semibold text-black mb-6 font-poppins">
-          Choose Your Role
+        <h2 className="text-2xl font-semibold text-black mb-4 font-poppins">
+          Who is filling out this form?
         </h2>
+        <p className="text-gray35 mb-6 font-poppins">
+          Choose the option that best describes you:
+        </p>
         <div className="card inline-flex p-2 bg-gray-50 border-gray-200">
           <button
             onClick={() => onUserTypeChange('candidate')}
-            className={`flex items-center px-8 py-4 rounded-xl font-medium transition-all duration-200 min-h-[56px] focus-visible ${
+            className={`flex flex-col items-center px-8 py-4 rounded-xl font-medium transition-all duration-200 min-h-[80px] focus-visible ${
               userType === 'candidate'
                 ? 'btn-primary shadow-md'
                 : 'btn-ghost hover:bg-white'
@@ -32,12 +68,15 @@ export const WelcomeStep: React.FC<WelcomeStepProps> = ({
             aria-pressed={userType === 'candidate'}
             aria-label="Select job candidate role"
           >
-            <User className="w-5 h-5 mr-3" aria-hidden="true" />
-            Job Candidate
+            <div className="flex items-center mb-1">
+              <User className="w-5 h-5 mr-2" aria-hidden="true" />
+              <span className="font-semibold">Job Candidate</span>
+            </div>
+            <span className="text-xs opacity-75">I'm applying for a job or just got hired</span>
           </button>
           <button
             onClick={() => onUserTypeChange('employer')}
-            className={`flex items-center px-8 py-4 rounded-xl font-medium transition-all duration-200 min-h-[56px] focus-visible ${
+            className={`flex flex-col items-center px-8 py-4 rounded-xl font-medium transition-all duration-200 min-h-[80px] focus-visible ${
               userType === 'employer'
                 ? 'btn-primary shadow-md'
                 : 'btn-ghost hover:bg-white'
@@ -45,8 +84,11 @@ export const WelcomeStep: React.FC<WelcomeStepProps> = ({
             aria-pressed={userType === 'employer'}
             aria-label="Select employer role"
           >
-            <Building2 className="w-5 h-5 mr-3" aria-hidden="true" />
-            Employer
+            <div className="flex items-center mb-1">
+              <Building2 className="w-5 h-5 mr-2" aria-hidden="true" />
+              <span className="font-semibold">Employer</span>
+            </div>
+            <span className="text-xs opacity-75">I'm hiring someone and need their paperwork</span>
           </button>
         </div>
       </div>
@@ -56,58 +98,56 @@ export const WelcomeStep: React.FC<WelcomeStepProps> = ({
         {userType === 'candidate' ? (
           <div className="card p-8 bg-gray-50 border-gray-100 max-w-3xl mx-auto">
             <h3 className="text-xl font-semibold text-black mb-4 font-poppins">
-              For Job Candidates
+              What You'll Do
             </h3>
             <p className="text-gray35 font-poppins leading-relaxed mb-6">
-              Complete your WOTC pre-screening to help your employer determine if you qualify 
-              for the Work Opportunity Tax Credit. This process typically takes 5-10 minutes 
-              and helps ensure faster processing of your employment documentation.
+              Complete this quick form so your employer can apply for tax credits that could save them 
+              thousands of dollars. This helps speed up your hiring process and benefits everyone.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
               <div className="flex items-center text-gray35">
-                <div className="w-2 h-2 bg-cinnabar rounded-full mr-3 flex-shrink-0"></div>
-                <span>Complete personal information</span>
+                <div className="w-2 h-2 bg-green-500 rounded-full mr-3 flex-shrink-0"></div>
+                <span>Share basic information about yourself</span>
               </div>
               <div className="flex items-center text-gray35">
-                <div className="w-2 h-2 bg-cinnabar rounded-full mr-3 flex-shrink-0"></div>
-                <span>Upload supporting documents</span>
+                <div className="w-2 h-2 bg-green-500 rounded-full mr-3 flex-shrink-0"></div>
+                <span>Upload documents you likely already have</span>
               </div>
               <div className="flex items-center text-gray35">
-                <div className="w-2 h-2 bg-cinnabar rounded-full mr-3 flex-shrink-0"></div>
-                <span>Review target group categories</span>
+                <div className="w-2 h-2 bg-green-500 rounded-full mr-3 flex-shrink-0"></div>
+                <span>Answer a few simple questions about your background</span>
               </div>
               <div className="flex items-center text-gray35">
-                <div className="w-2 h-2 bg-cinnabar rounded-full mr-3 flex-shrink-0"></div>
-                <span>Validate employment dates</span>
+                <div className="w-2 h-2 bg-green-500 rounded-full mr-3 flex-shrink-0"></div>
+                <span>Confirm your start date and basic info</span>
               </div>
             </div>
           </div>
         ) : (
           <div className="card p-8 bg-gray-50 border-gray-100 max-w-3xl mx-auto">
             <h3 className="text-xl font-semibold text-black mb-4 font-poppins">
-              For Employers
+              What You'll Do
             </h3>
             <p className="text-gray35 font-poppins leading-relaxed mb-6">
-              Complete the employer section of Form 8850 and manage your WOTC applications. 
-              Streamline your hiring process while maximizing available tax credits for 
-              qualifying employees.
+              Set up your company information and manage tax credit applications for your employees. 
+              Streamline your hiring process while maximizing available tax savings.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
               <div className="flex items-center text-gray35">
-                <div className="w-2 h-2 bg-cinnabar rounded-full mr-3 flex-shrink-0"></div>
-                <span>Company information setup</span>
+                <div className="w-2 h-2 bg-green-500 rounded-full mr-3 flex-shrink-0"></div>
+                <span>Add your company information</span>
               </div>
               <div className="flex items-center text-gray35">
-                <div className="w-2 h-2 bg-cinnabar rounded-full mr-3 flex-shrink-0"></div>
-                <span>Application management dashboard</span>
+                <div className="w-2 h-2 bg-green-500 rounded-full mr-3 flex-shrink-0"></div>
+                <span>Manage employee applications</span>
               </div>
               <div className="flex items-center text-gray35">
-                <div className="w-2 h-2 bg-cinnabar rounded-full mr-3 flex-shrink-0"></div>
-                <span>Form 8850 completion</span>
+                <div className="w-2 h-2 bg-green-500 rounded-full mr-3 flex-shrink-0"></div>
+                <span>Complete required tax forms</span>
               </div>
               <div className="flex items-center text-gray35">
-                <div className="w-2 h-2 bg-cinnabar rounded-full mr-3 flex-shrink-0"></div>
-                <span>State agency submission</span>
+                <div className="w-2 h-2 bg-green-500 rounded-full mr-3 flex-shrink-0"></div>
+                <span>Submit to state agencies</span>
               </div>
             </div>
           </div>
@@ -121,7 +161,7 @@ export const WelcomeStep: React.FC<WelcomeStepProps> = ({
           className="btn-primary px-8 py-4 text-lg font-poppins min-w-[200px]"
           aria-label={`Start ${userType === 'candidate' ? 'candidate' : 'employer'} application process`}
         >
-          {userType === 'candidate' ? 'Start Pre-Screening' : 'Begin Employer Setup'}
+          {userType === 'candidate' ? 'Start My Application' : 'Set Up My Company'}
         </button>
         
         {userType === 'employer' && onLoginToDashboard && (
@@ -130,7 +170,7 @@ export const WelcomeStep: React.FC<WelcomeStepProps> = ({
             className="btn-secondary px-8 py-4 text-lg font-poppins min-w-[200px]"
             aria-label="Access existing employer dashboard"
           >
-            Access Dashboard
+            View My Dashboard
           </button>
         )}
       </div>
