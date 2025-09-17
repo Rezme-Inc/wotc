@@ -19,7 +19,7 @@ export const WelcomeStep: React.FC<WelcomeStepProps> = ({
       {/* Getting Started Section */}
       <div className="mb-12 card p-8 bg-blue-50 border-blue-200">
         <h2 className="text-2xl font-semibold text-black mb-4 font-poppins">
-          🎯 Getting Started - 3 Simple Steps
+           Getting Started - 3 Simple Steps
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
           <div className="text-center">
