@@ -32,8 +32,8 @@ export const ValidationStep: React.FC<ValidationStepProps> = ({
         <h2 className="text-3xl font-semibold text-black mb-4 font-poppins">Validation Results</h2>
         <p className="text-gray35 font-poppins font-light text-lg leading-relaxed">
           {userType === 'candidate' 
-            ? "Thank you. I'm now checking that: 1) Gave Info ≤ Offered Job ≤ Hired ≤ Started Work. If any dates are out of order, I'll ask you to revise."
-            : "Thank you. I'm now validating the employment dates to ensure compliance with WOTC requirements. If any dates are inconsistent, I'll ask you to revise."
+             ? "Great! Your dates are correctly sequenced: 1. Gave Info → 2. Offered → 3. Hired → 4. Started. All information has been validated and is ready for submission."
+            : "Excellent! All employment dates have been validated and meet WOTC compliance requirements. The information is ready for processing."
           }
         </p>
       </div>
@@ -82,7 +82,7 @@ export const ValidationStep: React.FC<ValidationStepProps> = ({
               <p><strong className="font-medium text-black">Name:</strong> {formData.personalInfo.fullName}</p>
               <p><strong className="font-medium text-black">Date of Birth:</strong> {formatDate(formData.personalInfo.dateOfBirth)}</p>
               <p><strong className="font-medium text-black">Address:</strong> {formData.personalInfo.streetAddress}, {formData.personalInfo.city}, {formData.personalInfo.state} {formData.personalInfo.zipCode}</p>
-              <p><strong className="font-medium text-black">SSN (Last 4):</strong> ****{formData.personalInfo.ssnLastFour}</p>
+              <p><strong className="font-medium text-black">SSN:</strong> ***-**-{formData.personalInfo.socialSecurityNumber.slice(-4)}</p>
             </div>
           </div>
           
@@ -116,13 +116,16 @@ export const ValidationStep: React.FC<ValidationStepProps> = ({
       </div>
 
       {!dateValidation.isValid && (
-        <div className="bg-white border-l-4 border-cinnabar rounded-xl p-6 mb-8 shadow-sm">
-          <div className="flex items-start">
-            <AlertTriangle className="w-6 h-6 text-cinnabar mr-3 mt-0.5 flex-shrink-0" />
-            <div className="text-sm text-gray35 font-poppins">
-              <p className="font-medium mb-2 text-black">Action Required:</p>
-              <p className="font-light leading-relaxed">Please go back and correct the date issues before proceeding. The dates must be in chronological order and cannot be in the future.</p>
-            </div>
+        <div className="error-banner">
+          <h3 className="error-banner-header">
+            <AlertTriangle className="w-5 h-5 mr-3" />
+            Action Required:
+          </h3>
+          <div className="error-banner-list">
+            <p className="error-banner-item">
+              <span className="text-red-500 mr-2 font-bold">•</span>
+              Please go back and correct the date issues before proceeding. The dates must be in chronological order and cannot be in the future.
+            </p>
           </div>
         </div>
       )}
@@ -138,10 +141,10 @@ export const ValidationStep: React.FC<ValidationStepProps> = ({
         <button
           onClick={onNext}
           disabled={!dateValidation.isValid}
-          className={`font-medium py-4 px-10 rounded-xl transition-all duration-200 flex items-center font-poppins ${
+          className={`flex items-center px-10 py-4 font-poppins ${
             dateValidation.isValid
-              ? 'bg-black hover:bg-gray-800 text-white shadow-md hover:shadow-lg transform hover:-translate-y-0.5'
-              : 'bg-gray-200 text-gray35 cursor-not-allowed'
+              ? 'btn-primary'
+              : 'bg-gray-200 text-gray35 cursor-not-allowed rounded-xl font-medium'
           }`}
         >
           {dateValidation.isValid ? 'Proceed to Completion' : 'Fix Errors First'}

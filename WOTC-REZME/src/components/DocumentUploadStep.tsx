@@ -199,9 +199,9 @@ export const DocumentUploadStep: React.FC<DocumentUploadStepProps> = ({
                 <span className="text-white text-sm font-bold">i</span>
               </div>
             </div>
-            <div>
+            <div className="text-center flex-1">
               <h4 className="font-medium text-blue-900 mb-2">Important Information</h4>
-              <ul className="text-sm text-blue-800 space-y-1 font-light">
+              <ul className="text-sm text-blue-800 space-y-1 font-light text-left inline-block">
                 <li>• Upload at least one document for each target group you selected</li>
                 <li>• Documents must be clear, legible, and verify your eligibility</li>
                 <li>• Accepted formats: PDF, JPG, PNG, DOC, DOCX, TXT (max 10MB each)</li>
@@ -464,10 +464,10 @@ export const DocumentUploadStep: React.FC<DocumentUploadStepProps> = ({
         <button
           onClick={onNext}
           disabled={!canProceed}
-          className={`px-8 py-3 rounded-xl font-medium transition-all duration-200 ${
+          className={`flex items-center px-10 py-4 font-poppins ${
             canProceed
-              ? 'bg-black text-white hover:bg-gray-800 shadow-md hover:shadow-lg transform hover:-translate-y-0.5'
-              : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+              ? 'btn-primary'
+              : 'bg-gray-200 text-gray35 cursor-not-allowed rounded-xl font-medium'
           }`}
         >
           Continue →

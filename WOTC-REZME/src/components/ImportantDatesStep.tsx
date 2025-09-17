@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { ArrowRight, ArrowLeft, Calendar, AlertCircle } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Calendar, AlertCircle, AlertTriangle } from 'lucide-react';
 import { ImportantDates } from '../types/wotc';
+import { useValidation } from '../hooks/useValidation';
 
 interface ImportantDatesStepProps {
   importantDates: ImportantDates;
@@ -18,18 +19,13 @@ export const ImportantDatesStep: React.FC<ImportantDatesStepProps> = ({
   userType = 'candidate'
 }) => {
   const [errors, setErrors] = useState<string[]>([]);
+  const { validateImportantDates } = useValidation();
 
   const validateAndProceed = () => {
-    const newErrors: string[] = [];
-    
-    if (!importantDates.dateGaveInfo) newErrors.push('Date gave info is required');
-    if (!importantDates.dateOffered) newErrors.push('Date offered is required');
-    if (!importantDates.dateHired) newErrors.push('Date hired is required');
-    if (!importantDates.dateStarted) newErrors.push('Date started is required');
-    
-    setErrors(newErrors);
-    
-    if (newErrors.length === 0) {
+    const validation = validateImportantDates(importantDates, userType);
+    setErrors(validation.errors);
+
+    if (validation.isValid) {
       onNext();
     }
   };
@@ -52,14 +48,18 @@ export const ImportantDatesStep: React.FC<ImportantDatesStepProps> = ({
         )}
       </div>
 
-      {errors.length > 0 && (
-        <div className="bg-white border-l-4 border-cinnabar rounded-lg p-6 mb-8 shadow-sm">
-          <h3 className="text-black font-medium mb-3 font-poppins">
-            {userType === 'candidate' ? 'Please provide all required dates:' : 'Please confirm all required dates:'}
+            {errors.length > 0 && (
+        <div className="error-banner">
+          <h3 className="error-banner-header">
+            <AlertTriangle className="w-5 h-5 mr-3" />
+            The following issues were found:
           </h3>
-          <ul className="list-disc list-inside text-gray35 text-sm space-y-2 font-poppins font-light">
+          <ul className="error-banner-list">
             {errors.map((error, index) => (
-              <li key={index}>{error}</li>
+              <li key={index} className="error-banner-item">
+                <span className="text-red-500 mr-2 font-bold">•</span>
+                {error}
+              </li>
             ))}
           </ul>
         </div>
@@ -75,8 +75,8 @@ export const ImportantDatesStep: React.FC<ImportantDatesStepProps> = ({
               </p>
               <p className="text-gray35 font-poppins font-light leading-relaxed">
                 {userType === 'candidate' 
-                  ? 'These dates must be in chronological order: Gave Info ≤ Offered ≤ Hired ≤ Started'
-                  : 'For employers: Gave Info ≤ Offered, and both Hired & Started must be ≥ Gave Info and ≥ Offered'
+                  ? 'These dates must be in chronological order: 1. Gave Info → 2. Offered → 3. Hired → 4. Started'
+                  : 'For employers: 1. Gave Info → 2. Offered (both Hired & Started must come after steps 1 and 2)'
                 }
               </p>
             </div>
@@ -86,8 +86,8 @@ export const ImportantDatesStep: React.FC<ImportantDatesStepProps> = ({
         <div>
           <label className="block text-base font-medium text-black mb-3 font-poppins">
             {userType === 'candidate' 
-              ? 'Date You First Provided Target Group Information *'
-              : 'Date You Were First Provided Target Group Information *'
+              ? '1. Date You First Provided Target Group Information ate You First Provided Target Group Information *'
+              : '1. Date You Were First Provided Target Group Information *'
             }
           </label>
           <input
@@ -107,8 +107,8 @@ export const ImportantDatesStep: React.FC<ImportantDatesStepProps> = ({
         <div>
           <label className="block text-base font-medium text-black mb-3 font-poppins">
             {userType === 'candidate'
-              ? 'Date You Were Offered This Position *'
-              : 'Date You Offered This Position *'
+              ? '2. Date You Were Offered This Position *'
+              : '2. Date You Offered This Position *'
             }
           </label>
           <input
@@ -128,8 +128,8 @@ export const ImportantDatesStep: React.FC<ImportantDatesStepProps> = ({
         <div>
           <label className="block text-base font-medium text-black mb-3 font-poppins">
             {userType === 'candidate'
-              ? 'Date You Were Hired *'
-              : 'Date Candidate Was Hired *'
+              ? '3. Date You Were Hired *'
+              : '3. Date Candidate Was Hired *'
             }
           </label>
           <input
@@ -149,8 +149,8 @@ export const ImportantDatesStep: React.FC<ImportantDatesStepProps> = ({
         <div>
           <label className="block text-base font-medium text-black mb-3 font-poppins">
             {userType === 'candidate'
-              ? 'Date You Started Work *'
-              : 'Date Candidate Started Work *'
+              ? '4. ate You Started Work *'
+              : '4. Date Candidate Started Work *'
             }
           </label>
           <input
@@ -178,7 +178,7 @@ export const ImportantDatesStep: React.FC<ImportantDatesStepProps> = ({
         </button>
         <button
           onClick={validateAndProceed}
-          className="bg-black hover:bg-gray-800 text-white font-medium py-4 px-10 rounded-xl transition-all duration-200 flex items-center font-poppins shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+          className="btn-primary flex items-center px-10 py-4"
         >
           Continue
           <ArrowRight className="ml-3 w-5 h-5" />
