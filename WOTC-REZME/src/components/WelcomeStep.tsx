@@ -17,35 +17,15 @@ export const WelcomeStep: React.FC<WelcomeStepProps> = ({
   return (
     <div className="max-w-4xl mx-auto text-center section-spacing">
       {/* Getting Started Section */}
-      <div className="mb-12 card p-8 bg-blue-50 border-blue-200">
-        <h2 className="text-2xl font-semibold text-black mb-4 font-poppins">
-           Getting Started - 3 Simple Steps
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          <div className="text-center">
-            <div className="w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center mx-auto mb-3 text-lg font-semibold">
-              1
-            </div>
-            <h3 className="font-semibold text-black mb-2">Tell us about yourself</h3>
-            <p className="text-sm text-gray35">2-3 minutes</p>
-          </div>
-          <div className="text-center">
-            <div className="w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center mx-auto mb-3 text-lg font-semibold">
-              2
-            </div>
-            <h3 className="font-semibold text-black mb-2">Upload a few documents</h3>
-            <p className="text-sm text-gray35">2-3 minutes</p>
-          </div>
-          <div className="text-center">
-            <div className="w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center mx-auto mb-3 text-lg font-semibold">
-              3
-            </div>
-            <h3 className="font-semibold text-black mb-2">Review and submit</h3>
-            <p className="text-sm text-gray35">1-2 minutes</p>
-          </div>
+      <div className="mb-12 card p-6 bg-green-50 border-green-200">
+        <div className="flex items-center justify-center mb-4">
+          <div className="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
+          <h2 className="text-xl font-semibold text-black font-poppins">
+            This strengthens your job application
+          </h2>
         </div>
-        <p className="text-gray35 font-poppins">
-          This helps employers see the value you bring and access programs designed to support your employment.
+        <p className="text-gray35 font-poppins text-center">
+          Takes about 5 minutes and helps employers see why hiring you benefits everyone.
         </p>
       </div>
 

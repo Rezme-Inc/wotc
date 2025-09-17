@@ -65,10 +65,10 @@ function AppRefactored() {
           <div className="max-w-6xl mx-auto">
           {/* Header */}
           <header className="text-center mb-12">
-          <h1 className="text-4xl font-semibold mb-4 font-poppins">
-            <span className="text-black">Réz</span>
-            <span className="text-red-600">me</span> WOTC Compliance Assistant
-          </h1>
+            <h1 className="text-4xl font-semibold mb-4 font-poppins">
+              <span className="text-black">Réz</span>
+              <span className="text-red-600">me</span> Employment Application
+            </h1>
             <p className="text-gray35 font-poppins font-light text-lg max-w-2xl mx-auto">
             Complete this quick form to keep your application moving forward
             </p>
