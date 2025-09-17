@@ -70,7 +70,7 @@ function AppRefactored() {
             <span className="text-red-600">me</span> WOTC Compliance Assistant
           </h1>
             <p className="text-gray35 font-poppins font-light text-lg max-w-2xl mx-auto">
-              Help your employer save money by completing this quick form
+            Complete this quick form to keep your application moving forward
             </p>
             <div className="mt-4 flex items-center justify-center gap-6 text-sm text-gray35">
               <div className="flex items-center">
@@ -79,7 +79,7 @@ function AppRefactored() {
               </div>
               <div className="flex items-center">
                 <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                <span>Could save employer $1,200-$9,600</span>
+                <span>Strengthens your application</span>
               </div>
             </div>
           </header>

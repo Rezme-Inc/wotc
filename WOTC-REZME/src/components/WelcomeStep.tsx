@@ -45,7 +45,7 @@ export const WelcomeStep: React.FC<WelcomeStepProps> = ({
           </div>
         </div>
         <p className="text-gray35 font-poppins">
-          Your employer will receive everything they need to apply for tax credits on your behalf.
+          This helps employers see the value you bring and access programs designed to support your employment.
         </p>
       </div>
 
@@ -101,8 +101,9 @@ export const WelcomeStep: React.FC<WelcomeStepProps> = ({
               What You'll Do
             </h3>
             <p className="text-gray35 font-poppins leading-relaxed mb-6">
-              Complete this quick form so your employer can apply for tax credits that could save them 
-              thousands of dollars. This helps speed up your hiring process and benefits everyone.
+              This form helps employers access hiring incentives designed to give qualified candidates 
+              like you a better chance at employment. Completing it strengthens your application and 
+              demonstrates your eligibility for these opportunity programs.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
               <div className="flex items-center text-gray35">
