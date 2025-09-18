@@ -60,28 +60,19 @@ function AppRefactored() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <div className="container-main flex-1">
-        <div className="content-wrapper">
-          <div className="max-w-6xl mx-auto">
+      
+      {/* Full Width Gray Section - Title and Step Indicator */}
+      <section className="bg-gray-50 py-6">
+        <div className="max-w-6xl mx-auto px-6">
           {/* Header */}
-          <header className="text-center mb-12">
+          <header className="text-center mb-6">
             <h1 className="text-4xl font-semibold mb-4 font-poppins">
               <span className="text-black">Réz</span>
               <span className="text-red-600">me</span> Employment Application
             </h1>
             <p className="text-gray35 font-poppins font-light text-lg max-w-2xl mx-auto">
-            Complete this quick form to keep your application moving forward
+              Complete this quick form to keep your application moving forward
             </p>
-            <div className="mt-4 flex items-center justify-center gap-6 text-sm text-gray35">
-              <div className="flex items-center">
-                <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                <span>Takes 5-10 minutes</span>
-              </div>
-              <div className="flex items-center">
-                <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                <span>Strengthens your application</span>
-              </div>
-            </div>
           </header>
 
           {/* Step Indicator */}
@@ -90,10 +81,16 @@ function AppRefactored() {
             totalSteps={totalSteps} 
             userType={formData.userType} 
           />
+        </div>
+      </section>
+      
+      <div className="container-main flex-1">
+        <div className="content-wrapper">
+          <div className="max-w-6xl mx-auto">
 
           {/* Main Content Card */}
-          <main className="card animate-fade-in">
-            <div className="card-body p-8 lg:p-12">
+          <main>
+            <div className="card-body p-6 lg:p-8">
               {formData.currentStep === 1 && (
                 <WelcomeStep 
                   onNext={nextStep}
@@ -195,19 +192,62 @@ function AppRefactored() {
               )}
             </div>
           </main>
-
-          {/* Security Badge */}
-          <div className="text-center mt-12 py-4">
-            <div className="flex items-center justify-center mb-4">
-              <CheckCircle className="w-5 h-5 text-cinnabar mr-2" />
-              <span className="text-sm text-gray35 font-poppins">
-                Secure & WOTC Compliant
-              </span>
-            </div>
-          </div>
         </div>
       </div>
       </div>
+      
+      {/* Gray Background Section for Action Buttons and Below */}
+      <section className="bg-gray-50 flex-1">
+        <div className="container-main">
+          <div className="max-w-6xl mx-auto px-4">
+              
+              {/* Action buttons for WelcomeStep */}
+              {formData.currentStep === 1 && (
+                <div className="max-w-4xl mx-auto text-center pt-2">
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
+                    <button
+                      onClick={nextStep}
+                      className="btn-primary px-8 py-4 text-lg font-poppins min-w-[200px]"
+                      aria-label={`Start ${formData.userType === 'candidate' ? 'candidate' : 'employer'} application process`}
+                    >
+                      {formData.userType === 'candidate' ? 'Start My Application' : 'Set Up My Company'}
+                    </button>
+                    
+                    {formData.userType === 'employer' && loginToDashboard && (
+                      <button
+                        onClick={loginToDashboard}
+                        className="btn-secondary px-8 py-4 text-lg font-poppins min-w-[200px]"
+                        aria-label="Access existing employer dashboard"
+                      >
+                        View My Dashboard
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Additional information */}
+                  <div className="max-w-2xl mx-auto">
+                    <button
+                      className="flex items-center justify-center w-full p-4 text-sm text-gray35 hover:text-black transition-colors duration-200 focus-visible"
+                      aria-label="Toggle Work Opportunity Tax Credit information"
+                    >
+                      <span className="font-medium">About the Work Opportunity Tax Credit</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Security Badge */}
+              <div className="text-center mt-8 py-4">
+                <div className="flex items-center justify-center mb-4">
+                  <CheckCircle className="w-5 h-5 text-cinnabar mr-2" />
+                  <span className="text-sm text-gray35 font-poppins">
+                    Secure & WOTC Compliant
+                  </span>
+                </div>
+              </div>
+          </div>
+        </div>
+      </section>
       
       <Footer />
     </div>

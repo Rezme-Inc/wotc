@@ -16,9 +16,9 @@ export const WelcomeStep: React.FC<WelcomeStepProps> = ({
 }) => {
   const [showAbout, setShowAbout] = useState(false);
   return (
-    <div className="max-w-4xl mx-auto text-center section-spacing">
+    <div className="max-w-4xl mx-auto text-center">
       {/* Getting Started Section */}
-      <div className="mb-12 card p-6 bg-green-50 border-green-200">
+      <div className="mb-6 card p-6 bg-green-50 border-green-200">
         <div className="flex items-center justify-center mb-4">
           <div className="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
           <h2 className="text-xl font-semibold text-black font-poppins">
@@ -31,7 +31,7 @@ export const WelcomeStep: React.FC<WelcomeStepProps> = ({
       </div>
 
       {/* User Type Toggle */}
-      <div className="mb-12">
+      <div className="mb-8">
         <h2 className="text-2xl font-semibold text-black mb-8 font-poppins">
           Who is filling out this form?
         </h2>
@@ -72,7 +72,7 @@ export const WelcomeStep: React.FC<WelcomeStepProps> = ({
       </div>
 
       {/* Content based on user type */}
-      <div className="mb-12 animate-fade-in">
+      <div className="mb-8 animate-fade-in">
         {userType === 'candidate' ? (
           <div className="card p-8 bg-gray-50 border-gray-100 max-w-3xl mx-auto">
             <h3 className="text-xl font-semibold text-black mb-4 font-poppins">
@@ -133,53 +133,8 @@ export const WelcomeStep: React.FC<WelcomeStepProps> = ({
         )}
       </div>
 
-      {/* Action buttons */}
-      <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-        <button
-          onClick={onNext}
-          className="btn-primary px-8 py-4 text-lg font-poppins min-w-[200px]"
-          aria-label={`Start ${userType === 'candidate' ? 'candidate' : 'employer'} application process`}
-        >
-          {userType === 'candidate' ? 'Start My Application' : 'Set Up My Company'}
-        </button>
-        
-        {userType === 'employer' && onLoginToDashboard && (
-          <button
-            onClick={onLoginToDashboard}
-            className="btn-secondary px-8 py-4 text-lg font-poppins min-w-[200px]"
-            aria-label="Access existing employer dashboard"
-          >
-            View My Dashboard
-          </button>
-        )}
-      </div>
-
-      {/* Additional information */}
-      <div className="mt-12 max-w-2xl mx-auto">
-        <button
-          onClick={() => setShowAbout(!showAbout)}
-          className="flex items-center justify-center w-full p-4 text-sm text-gray35 hover:text-black transition-colors duration-200 focus-visible"
-          aria-expanded={showAbout}
-          aria-label="Toggle Work Opportunity Tax Credit information"
-        >
-          <span className="font-medium">About the Work Opportunity Tax Credit</span>
-          {showAbout ? (
-            <ChevronUp className="w-4 h-4 ml-2" />
-          ) : (
-            <ChevronDown className="w-4 h-4 ml-2" />
-          )}
-        </button>
-        
-        {showAbout && (
-          <div className="card p-6 bg-blue-50 border-blue-200 animate-fade-in">
-            <p className="text-sm text-gray35 font-poppins leading-relaxed">
-              The WOTC program provides federal tax credits to employers who hire individuals 
-              from certain target groups that have consistently faced significant barriers to 
-              employment. Credits can range from $1,200 to $9,600 per qualified employee.
-            </p>
-          </div>
-        )}
-      </div>
+      {/* Action buttons - This will be moved outside */}
+      
     </div>
   );
 };
