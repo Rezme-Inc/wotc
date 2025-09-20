@@ -1,6 +1,6 @@
-import React from 'react';
-import { ArrowRight, ArrowLeft, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
-import { WOTCFormData } from '../types/wotc';
+import React, { useState } from 'react';
+import { ArrowRight, ArrowLeft, CheckCircle, XCircle, AlertTriangle, FileText, Eye, Download, X } from 'lucide-react';
+import { WOTCFormData, DocumentUpload } from '../types/wotc';
 import { validateDates, formatDate } from '../utils/dateValidation';
 
 interface ValidationStepProps {
@@ -16,8 +16,51 @@ export const ValidationStep: React.FC<ValidationStepProps> = ({
   onPrevious,
   userType = 'candidate'
 }) => {
+  const [previewDocument, setPreviewDocument] = useState<DocumentUpload | null>(null);
+  
   const dateValidation = validateDates(formData.importantDates, userType);
   const selectedGroups = formData.targetGroups.filter(group => group.selected);
+  
+  // Separate documents by type
+  const targetGroupDocs = formData.documents.filter(doc => doc.targetGroupId !== 'employment_docs');
+  const employmentDocs = formData.documents.filter(doc => doc.targetGroupId === 'employment_docs');
+  
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
+  const createFilePreviewURL = (file: File) => {
+    return URL.createObjectURL(file);
+  };
+
+  const getFilePreviewURL = (doc: DocumentUpload) => {
+    if (doc.file) {
+      return createFilePreviewURL(doc.file);
+    }
+    return null;
+  };
+
+  const isPreviewable = (fileType: string) => {
+    return fileType.includes('pdf') || 
+           fileType.includes('image/') || 
+           fileType.includes('text/') ||
+           fileType.includes('application/vnd.openxmlformats-officedocument.wordprocessingml.document') ||
+           fileType.includes('application/msword') ||
+           fileType.includes('heic') || 
+           fileType.includes('heif');
+  };
+
+  const handlePreviewDocument = (doc: DocumentUpload) => {
+    setPreviewDocument(doc);
+  };
+
+  const closePreview = () => {
+    setPreviewDocument(null);
+  };
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -115,6 +158,123 @@ export const ValidationStep: React.FC<ValidationStepProps> = ({
         </div>
       </div>
 
+      {/* Uploaded Documents Section */}
+      {formData.documents.length > 0 && (
+        <div className="bg-white rounded-xl p-8 mb-8 border border-gray-200 shadow-sm">
+          <h3 className="font-medium text-black mb-6 font-poppins text-xl">
+            Uploaded Documents ({formData.documents.length})
+          </h3>
+          
+          {/* Target Group Documents */}
+          {targetGroupDocs.length > 0 && (
+            <div className="mb-8">
+              <h4 className="font-medium text-black mb-4 font-poppins text-lg">Target Group Supporting Documents</h4>
+              <div className="space-y-3">
+                {targetGroupDocs.map((doc) => (
+                  <div key={doc.id} className="flex items-center justify-between bg-gray-50 rounded-lg p-4 border border-gray-200">
+                    <div className="flex items-center">
+                      <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+                        <FileText className="w-6 h-6 text-green-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-black">{doc.fileName}</p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          Target Group: {doc.targetGroupName}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {formatFileSize(doc.fileSize)} • Uploaded on {new Date(doc.uploadDate).toLocaleDateString()}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {isPreviewable(doc.fileType) && (
+                        <button
+                          onClick={() => handlePreviewDocument(doc)}
+                          className="flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-800 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors duration-200"
+                          title="Preview document"
+                        >
+                          <Eye className="w-4 h-4 mr-1" />
+                          Preview
+                        </button>
+                      )}
+                      <a
+                        href={getFilePreviewURL(doc) || '#'}
+                        download={doc.fileName}
+                        className="flex items-center px-3 py-2 text-sm font-medium text-black bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors duration-200"
+                      >
+                        <Download className="w-4 h-4 mr-1" />
+                        Download
+                      </a>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Employment Documents */}
+          {employmentDocs.length > 0 && (
+            <div>
+              <h4 className="font-medium text-black mb-4 font-poppins text-lg">Employment Supporting Documents</h4>
+              <div className="space-y-3">
+                {employmentDocs.map((doc) => (
+                  <div key={doc.id} className="flex items-center justify-between bg-blue-50 rounded-lg p-4 border border-blue-200">
+                    <div className="flex items-center">
+                      <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                        <FileText className="w-6 h-6 text-blue-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-black">{doc.fileName}</p>
+                        <p className="text-xs text-blue-600 mt-1">
+                          Employment Documentation
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {formatFileSize(doc.fileSize)} • Uploaded on {new Date(doc.uploadDate).toLocaleDateString()}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {isPreviewable(doc.fileType) && (
+                        <button
+                          onClick={() => handlePreviewDocument(doc)}
+                          className="flex items-center px-3 py-2 text-sm font-medium text-blue-600 hover:text-blue-800 bg-blue-100 hover:bg-blue-200 rounded-lg transition-colors duration-200"
+                          title="Preview document"
+                        >
+                          <Eye className="w-4 h-4 mr-1" />
+                          Preview
+                        </button>
+                      )}
+                      <a
+                        href={getFilePreviewURL(doc) || '#'}
+                        download={doc.fileName}
+                        className="flex items-center px-3 py-2 text-sm font-medium text-black bg-blue-100 hover:bg-blue-200 rounded-lg transition-colors duration-200"
+                      >
+                        <Download className="w-4 h-4 mr-1" />
+                        Download
+                      </a>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Summary stats */}
+          <div className="mt-6 pt-6 border-t border-gray-200">
+            <div className="flex items-center justify-between text-sm text-gray-500 font-poppins">
+              <span>
+                Total Documents: {formData.documents.length} 
+                {targetGroupDocs.length > 0 && ` • Target Group: ${targetGroupDocs.length}`}
+                {employmentDocs.length > 0 && ` • Employment: ${employmentDocs.length}`}
+              </span>
+              <span className="text-green-600 font-medium">
+                ✓ All documents ready for submission
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {!dateValidation.isValid && (
         <div className="error-banner">
           <h3 className="error-banner-header">
@@ -151,6 +311,162 @@ export const ValidationStep: React.FC<ValidationStepProps> = ({
           <ArrowRight className="ml-3 w-5 h-5" />
         </button>
       </div>
+
+      {/* Document Preview Modal */}
+      {previewDocument && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl max-w-4xl max-h-[90vh] w-full flex flex-col shadow-2xl">
+            {/* Modal Header */}
+            <div className="p-6 border-b border-gray-200 flex items-center justify-between">
+              <div>
+                <h3 className="text-xl font-medium text-black">Document Preview</h3>
+                <p className="text-sm text-gray35 mt-1">{previewDocument.fileName}</p>
+              </div>
+              <div className="flex items-center gap-3">
+                {previewDocument.file && (
+                  <a
+                    href={getFilePreviewURL(previewDocument) || '#'}
+                    download={previewDocument.fileName}
+                    className="inline-flex items-center px-3 py-2 text-sm font-medium text-black bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors duration-200"
+                  >
+                    <Download className="w-4 h-4 mr-2" />
+                    Download
+                  </a>
+                )}
+                <button
+                  onClick={closePreview}
+                  className="text-gray35 hover:text-black transition-colors duration-200 p-2"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+            </div>
+            
+            {/* Modal Content */}
+            <div className="flex-1 p-6 overflow-hidden">
+              {previewDocument.file && getFilePreviewURL(previewDocument) ? (
+                <div className="h-full">
+                  {previewDocument.fileType.includes('pdf') ? (
+                    <iframe
+                      src={getFilePreviewURL(previewDocument) || ''}
+                      className="w-full h-full border border-gray-200 rounded-lg"
+                      title={previewDocument.fileName}
+                    />
+                  ) : (previewDocument.fileType.includes('image/') || 
+                        previewDocument.fileType.includes('heic') || 
+                        previewDocument.fileType.includes('heif')) ? (
+                    <div className="flex items-center justify-center h-full">
+                      <img
+                        src={getFilePreviewURL(previewDocument) || ''}
+                        alt={previewDocument.fileName}
+                        className="max-w-full max-h-full object-contain rounded-lg shadow-md"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          const parent = target.parentElement;
+                          if (parent) {
+                            parent.innerHTML = `
+                              <div class="text-center">
+                                <div class="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                                  <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                  </svg>
+                                </div>
+                                <p class="text-gray-500 mb-2">Image preview not supported in this browser</p>
+                                <p class="text-sm text-gray-400 mb-4">Your ${previewDocument.fileName.split('.').pop()?.toUpperCase()} file was uploaded successfully</p>
+                                <a href="${getFilePreviewURL(previewDocument) || '#'}" download="${previewDocument.fileName}" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-black hover:bg-gray-800 rounded-lg transition-colors duration-200">
+                                  <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                  Download to View
+                                </a>
+                              </div>
+                            `;
+                          }
+                        }}
+                      />
+                    </div>
+                  ) : previewDocument.fileType.includes('text/') ? (
+                    <iframe
+                      src={getFilePreviewURL(previewDocument) || ''}
+                      className="w-full h-full border border-gray-200 rounded-lg bg-white"
+                      title={previewDocument.fileName}
+                    />
+                  ) : (previewDocument.fileType.includes('application/vnd.openxmlformats-officedocument.wordprocessingml.document') ||
+                        previewDocument.fileType.includes('application/msword')) ? (
+                    <div className="flex items-center justify-center h-full">
+                      <div className="text-center max-w-md">
+                        <div className="w-20 h-20 bg-blue-50 rounded-lg flex items-center justify-center mx-auto mb-6">
+                          <svg className="w-10 h-10 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+                          </svg>
+                        </div>
+                        <h4 className="text-lg font-medium text-gray-900 mb-2">Document Ready for Review</h4>
+                        <p className="text-gray-600 mb-4">
+                          Your {previewDocument.fileName.split('.').pop()?.toUpperCase()} document is ready for submission.
+                        </p>
+                        <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+                          <div className="flex items-center">
+                            <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
+                            <span className="text-sm font-medium text-green-800">Document validated and ready</span>
+                          </div>
+                        </div>
+                        <a
+                          href={getFilePreviewURL(previewDocument) || '#'}
+                          download={previewDocument.fileName}
+                          className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-black hover:bg-gray-800 rounded-lg transition-colors duration-200"
+                        >
+                          <Download className="w-4 h-4 mr-2" />
+                          Download Document
+                        </a>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center h-full">
+                      <div className="text-center">
+                        <FileText className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                        <p className="text-gray35 mb-2">Preview not available for this file type</p>
+                        <p className="text-sm text-gray-400 mb-4">{previewDocument.fileType}</p>
+                        <a
+                          href={getFilePreviewURL(previewDocument) || '#'}
+                          download={previewDocument.fileName}
+                          className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-black hover:bg-gray-800 rounded-lg transition-colors duration-200"
+                        >
+                          <Download className="w-4 h-4 mr-2" />
+                          Download to View
+                        </a>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="flex items-center justify-center h-full">
+                  <div className="text-center">
+                    <AlertTriangle className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
+                    <p className="text-gray35 mb-2">Unable to preview this document</p>
+                    <p className="text-sm text-gray-400">The file may be corrupted or in an unsupported format</p>
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            {/* Modal Footer */}
+            <div className="p-6 border-t border-gray-200 bg-gray-50 rounded-b-xl">
+              <div className="flex items-center justify-between">
+                <div className="text-sm text-gray35">
+                  <span className="font-medium">File size:</span> {formatFileSize(previewDocument.fileSize)} • 
+                  <span className="font-medium ml-2">Type:</span> {previewDocument.fileType} • 
+                  <span className="font-medium ml-2">Category:</span> {previewDocument.targetGroupName}
+                </div>
+                <button
+                  onClick={closePreview}
+                  className="px-4 py-2 text-sm font-medium text-gray35 hover:text-black transition-colors duration-200"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

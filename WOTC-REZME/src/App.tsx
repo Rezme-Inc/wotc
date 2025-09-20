@@ -174,6 +174,8 @@ function AppRefactored() {
                 <ImportantDatesStep
                   importantDates={formData.importantDates}
                   onUpdate={updateImportantDates}
+                  documents={formData.documents}
+                  onDocumentsUpdate={updateDocuments}
                   onNext={nextStep}
                   onPrevious={previousStep}
                   userType={formData.userType}
@@ -184,6 +186,8 @@ function AppRefactored() {
                 <ImportantDatesStep
                   importantDates={formData.importantDates}
                   onUpdate={updateImportantDates}
+                  documents={formData.documents}
+                  onDocumentsUpdate={updateDocuments}
                   onNext={nextStep}
                   onPrevious={previousStep}
                   userType={formData.userType}
