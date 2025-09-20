@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Download, FileText, FileSignature as Signature, AlertCircle, AlertTriangle } from 'lucide-react';
 import { WOTCFormData } from '../types/wotc';
 import { formatDate } from '../utils/dateValidation';
@@ -34,6 +34,21 @@ export const CompletionStep: React.FC<CompletionStepProps> = ({
   const [isAgreed, setIsAgreed] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
   const [fieldErrors, setFieldErrors] = useState<{[key: string]: boolean}>({});
+  
+  // Editable form state
+  const [editablePersonalInfo, setEditablePersonalInfo] = useState(formData.personalInfo);
+  const [editableImportantDates, setEditableImportantDates] = useState(formData.importantDates);
+  
+  // Editable checkbox state - will be initialized after getFormCheckboxes is defined
+  const [editableCheckboxes, setEditableCheckboxes] = useState({
+    checkbox1: false,
+    checkbox2: false,
+    checkbox3: false,
+    checkbox4: false,
+    checkbox5: false,
+    checkbox6: false,
+    checkbox7: false
+  });
 
     const handleSubmit = () => {
     const newErrors: string[] = [];
@@ -70,7 +85,16 @@ export const CompletionStep: React.FC<CompletionStepProps> = ({
 
   const formatDateForForm = (dateString: string): string => {
     if (!dateString) return '';
-    const date = new Date(dateString);
+    // Parse the date string directly to avoid timezone issues
+    const parts = dateString.split('-');
+    if (parts.length === 3) {
+      const year = parts[0];
+      const month = parts[1];
+      const day = parts[2];
+      return `${month}/${day}/${year}`;
+    }
+    // Fallback for other date formats
+    const date = new Date(dateString + 'T00:00:00');
     return date.toLocaleDateString('en-US', {
       month: '2-digit',
       day: '2-digit',
@@ -94,6 +118,60 @@ export const CompletionStep: React.FC<CompletionStepProps> = ({
       return `${digits.slice(0, 2)}-${digits.slice(2, 9)}`;
     }
     return ein;
+  };
+
+  // Map selected target groups to form checkboxes
+  const getFormCheckboxes = () => {
+    const selectedGroups = formData.targetGroups.filter(group => group.selected);
+    const checkboxes = {
+      checkbox1: false, // Conditional certification
+      checkbox2: false, // Any of the following statements
+      checkbox3: false, // Veteran unemployed 6+ months
+      checkbox4: false, // Veteran disabled discharged past year
+      checkbox5: false, // Veteran disabled unemployed 6+ months
+      checkbox6: false, // TANF family
+      checkbox7: false  // Unemployed 27+ consecutive weeks
+    };
+
+    selectedGroups.forEach(group => {
+      switch (group.id) {
+        case 'snap_tanf':
+        case 'ex_felon':
+        case 'vocational_rehab':
+        case 'summer_youth':
+          checkboxes.checkbox2 = true;
+          break;
+        case 'unemployed_veteran':
+          checkboxes.checkbox2 = true;
+          checkboxes.checkbox3 = true;
+          break;
+        case 'disabled_veteran':
+          checkboxes.checkbox4 = true;
+          checkboxes.checkbox5 = true;
+          break;
+        case 'long_term_family_assistance':
+          checkboxes.checkbox6 = true;
+          break;
+        case 'veteran':
+          checkboxes.checkbox2 = true;
+          break;
+      }
+    });
+
+    return checkboxes;
+  };
+
+  // Initialize editable checkboxes with computed values
+  useEffect(() => {
+    const computedCheckboxes = getFormCheckboxes();
+    setEditableCheckboxes(computedCheckboxes);
+  }, [formData.targetGroups]);
+
+  const handleCheckboxChange = (checkboxId: keyof typeof editableCheckboxes) => {
+    setEditableCheckboxes(prev => ({
+      ...prev,
+      [checkboxId]: !prev[checkboxId]
+    }));
   };
 
   return (
@@ -130,17 +208,38 @@ export const CompletionStep: React.FC<CompletionStepProps> = ({
         </div>
       )}
 
+      {/* Edit Instructions */}
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+        <div className="flex items-center">
+          <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center mr-3">
+            <span className="text-white text-sm font-bold">✏️</span>
+          </div>
+          <div>
+            <p className="text-blue-800 text-sm font-poppins font-medium">
+              <strong>Editable Form:</strong> You can click on any field or checkbox below to make corrections before final submission.
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Form 8850 Preview */}
       <div className="bg-white border-2 border-gray-300 rounded-lg p-8 mb-8 shadow-lg font-mono text-sm">
         {/* Form Header */}
         <div className="border-b-2 border-black pb-4 mb-6">
-          <div className="flex justify-between items-start">
+          <div className="flex justify-between items-start mb-4">
             <div>
-              <div className="text-2xl font-bold">8850</div>
+              <div className="text-3xl font-bold">8850</div>
               <div className="text-xs">(Rev. March 2016)</div>
+              <div className="text-xs">Department of the Treasury</div>
+              <div className="text-xs">Internal Revenue Service</div>
+            </div>
+            <div className="text-center flex-1 mx-8">
+              <div className="text-lg font-bold">Pre-Screening Notice and Certification Request for</div>
+              <div className="text-lg font-bold">the Work Opportunity Credit</div>
+              <div className="text-xs mt-1">▶ Information about Form 8850 and its separate instructions is at www.irs.gov/form8850.</div>
             </div>
             <div className="text-right">
-              <div className="text-lg font-bold">Page 2</div>
+              <div className="text-sm">OMB No. 1545-1500</div>
             </div>
           </div>
         </div>
@@ -250,25 +349,45 @@ export const CompletionStep: React.FC<CompletionStepProps> = ({
                 <div className="text-center">
                   <div className="font-medium text-xs mb-2">Gave information</div>
                   <div className="border-b border-gray-400 pb-1">
-                    <span className="font-poppins text-xs">{formatDateForForm(formData.importantDates.dateGaveInfo) || '_'.repeat(10)}</span>
+                    <input
+                      type="date"
+                      value={editableImportantDates.dateGaveInfo}
+                      onChange={(e) => setEditableImportantDates({...editableImportantDates, dateGaveInfo: e.target.value})}
+                      className="bg-transparent border-none outline-none font-poppins text-xs w-full text-center"
+                    />
                   </div>
                 </div>
                 <div className="text-center">
                   <div className="font-medium text-xs mb-2">Was offered job</div>
                   <div className="border-b border-gray-400 pb-1">
-                    <span className="font-poppins text-xs">{formatDateForForm(formData.importantDates.dateOffered) || '_'.repeat(10)}</span>
+                    <input
+                      type="date"
+                      value={editableImportantDates.dateOffered}
+                      onChange={(e) => setEditableImportantDates({...editableImportantDates, dateOffered: e.target.value})}
+                      className="bg-transparent border-none outline-none font-poppins text-xs w-full text-center"
+                    />
                   </div>
                 </div>
                 <div className="text-center">
                   <div className="font-medium text-xs mb-2">Was hired</div>
                   <div className="border-b border-gray-400 pb-1">
-                    <span className="font-poppins text-xs">{formatDateForForm(formData.importantDates.dateHired) || '_'.repeat(10)}</span>
+                    <input
+                      type="date"
+                      value={editableImportantDates.dateHired}
+                      onChange={(e) => setEditableImportantDates({...editableImportantDates, dateHired: e.target.value})}
+                      className="bg-transparent border-none outline-none font-poppins text-xs w-full text-center"
+                    />
                   </div>
                 </div>
                 <div className="text-center">
                   <div className="font-medium text-xs mb-2">Started job</div>
                   <div className="border-b border-gray-400 pb-1">
-                    <span className="font-poppins text-xs">{formatDateForForm(formData.importantDates.dateStarted) || '_'.repeat(10)}</span>
+                    <input
+                      type="date"
+                      value={editableImportantDates.dateStarted}
+                      onChange={(e) => setEditableImportantDates({...editableImportantDates, dateStarted: e.target.value})}
+                      className="bg-transparent border-none outline-none font-poppins text-xs w-full text-center"
+                    />
                   </div>
                 </div>
               </div>
@@ -307,7 +426,7 @@ export const CompletionStep: React.FC<CompletionStepProps> = ({
           /* Candidate Section - Original Form */
           <>
             <div className="mb-6">
-          <div className="font-bold text-center mb-4 border-b border-gray-400 pb-2">
+          <div className="font-bold text-center mb-6 text-sm">
             Job applicant: Fill in the lines below and check any boxes that apply. Complete only this side.
           </div>
 
@@ -318,13 +437,26 @@ export const CompletionStep: React.FC<CompletionStepProps> = ({
               <div className="flex-1">
                 <span className="font-medium">Your name</span>
                 <div className="border-b border-gray-400 pb-1 mt-1">
-                  <span className="font-poppins">{formData.personalInfo.fullName || '_'.repeat(50)}</span>
+                  <input
+                    type="text"
+                    value={editablePersonalInfo.fullName}
+                    onChange={(e) => setEditablePersonalInfo({...editablePersonalInfo, fullName: e.target.value})}
+                    className="bg-transparent border-none outline-none font-poppins w-full text-sm"
+                    placeholder="Enter your full name"
+                  />
                 </div>
               </div>
               <div className="ml-8 flex-shrink-0">
                 <span className="font-medium">Social security number ▶</span>
                 <div className="border-b border-gray-400 pb-1 mt-1 w-40">
-                  <span className="font-poppins">{formatSSNForDisplay(formData.personalInfo.socialSecurityNumber) || '_'.repeat(15)}</span>
+                  <input
+                    type="text"
+                    value={editablePersonalInfo.socialSecurityNumber}
+                    onChange={(e) => setEditablePersonalInfo({...editablePersonalInfo, socialSecurityNumber: e.target.value})}
+                    className="bg-transparent border-none outline-none font-poppins w-full text-sm"
+                    placeholder="___-__-____"
+                    maxLength={11}
+                  />
                 </div>
               </div>
             </div>
@@ -333,20 +465,44 @@ export const CompletionStep: React.FC<CompletionStepProps> = ({
             <div>
               <span className="font-medium">Street address where you live</span>
               <div className="border-b border-gray-400 pb-1 mt-1">
-                <span className="font-poppins">{formData.personalInfo.streetAddress || '_'.repeat(80)}</span>
+                <input
+                  type="text"
+                  value={editablePersonalInfo.streetAddress}
+                  onChange={(e) => setEditablePersonalInfo({...editablePersonalInfo, streetAddress: e.target.value})}
+                  className="bg-transparent border-none outline-none font-poppins w-full text-sm"
+                  placeholder="Enter your street address"
+                />
               </div>
             </div>
 
             {/* City, State, ZIP */}
             <div>
               <span className="font-medium">City or town, state, and ZIP code</span>
-              <div className="border-b border-gray-400 pb-1 mt-1">
-                <span className="font-poppins">
-                  {formData.personalInfo.city && formData.personalInfo.state && formData.personalInfo.zipCode
-                    ? `${formData.personalInfo.city}, ${formData.personalInfo.state} ${formData.personalInfo.zipCode}`
-                    : '_'.repeat(80)
-                  }
-                </span>
+              <div className="border-b border-gray-400 pb-1 mt-1 flex gap-2">
+                <input
+                  type="text"
+                  value={editablePersonalInfo.city}
+                  onChange={(e) => setEditablePersonalInfo({...editablePersonalInfo, city: e.target.value})}
+                  className="bg-transparent border-none outline-none font-poppins flex-1 text-sm"
+                  placeholder="City"
+                />
+                <span className="font-poppins text-sm">,</span>
+                <input
+                  type="text"
+                  value={editablePersonalInfo.state}
+                  onChange={(e) => setEditablePersonalInfo({...editablePersonalInfo, state: e.target.value})}
+                  className="bg-transparent border-none outline-none font-poppins w-12 text-sm"
+                  placeholder="ST"
+                  maxLength={2}
+                />
+                <input
+                  type="text"
+                  value={editablePersonalInfo.zipCode}
+                  onChange={(e) => setEditablePersonalInfo({...editablePersonalInfo, zipCode: e.target.value})}
+                  className="bg-transparent border-none outline-none font-poppins w-20 text-sm"
+                  placeholder="ZIP"
+                  maxLength={10}
+                />
               </div>
             </div>
 
@@ -355,13 +511,25 @@ export const CompletionStep: React.FC<CompletionStepProps> = ({
               <div className="flex-1">
                 <span className="font-medium">County</span>
                 <div className="border-b border-gray-400 pb-1 mt-1">
-                  <span className="font-poppins">{formData.personalInfo.county || '_'.repeat(30)}</span>
+                  <input
+                    type="text"
+                    value={editablePersonalInfo.county}
+                    onChange={(e) => setEditablePersonalInfo({...editablePersonalInfo, county: e.target.value})}
+                    className="bg-transparent border-none outline-none font-poppins w-full text-sm"
+                    placeholder="Enter county"
+                  />
                 </div>
               </div>
               <div className="ml-8 flex-shrink-0">
                 <span className="font-medium">Telephone number</span>
                 <div className="border-b border-gray-400 pb-1 mt-1 w-40">
-                  <span className="font-poppins">{formData.personalInfo.telephoneNumber || '_'.repeat(15)}</span>
+                  <input
+                    type="text"
+                    value={editablePersonalInfo.telephoneNumber}
+                    onChange={(e) => setEditablePersonalInfo({...editablePersonalInfo, telephoneNumber: e.target.value})}
+                    className="bg-transparent border-none outline-none font-poppins w-full text-sm"
+                    placeholder="(555) 123-4567"
+                  />
                 </div>
               </div>
             </div>
@@ -370,7 +538,12 @@ export const CompletionStep: React.FC<CompletionStepProps> = ({
             <div>
               <span className="font-medium">If you are under age 40, enter your date of birth (month, day, year)</span>
               <div className="border-b border-gray-400 pb-1 mt-1 w-60">
-                <span className="font-poppins">{formatDateForForm(formData.personalInfo.dateOfBirth) || '_'.repeat(15)}</span>
+                <input
+                  type="date"
+                  value={editablePersonalInfo.dateOfBirth}
+                  onChange={(e) => setEditablePersonalInfo({...editablePersonalInfo, dateOfBirth: e.target.value})}
+                  className="bg-transparent border-none outline-none font-poppins w-full text-sm"
+                />
               </div>
             </div>
           </div>
@@ -381,8 +554,11 @@ export const CompletionStep: React.FC<CompletionStepProps> = ({
             <div className="flex items-start">
               <div className="flex items-center mr-4">
                 <span className="font-bold mr-3">1</span>
-                <div className="w-4 h-4 border border-gray-400 flex items-center justify-center">
-                  {formData.personalInfo.conditionalCertification && <span className="text-xs">✓</span>}
+                <div 
+                  className="w-4 h-4 border-2 border-black flex items-center justify-center cursor-pointer hover:bg-gray-100"
+                  onClick={() => handleCheckboxChange('checkbox1')}
+                >
+                  {editableCheckboxes.checkbox1 && <span className="text-xs font-bold">✓</span>}
                 </div>
               </div>
               <div className="flex-1 text-xs leading-relaxed">
@@ -394,25 +570,28 @@ export const CompletionStep: React.FC<CompletionStepProps> = ({
             <div className="flex items-start">
               <div className="flex items-center mr-4">
                 <span className="font-bold mr-3">2</span>
-                <div className="w-4 h-4 border border-gray-400 flex items-center justify-center">
-                  {formData.personalInfo.targetGroupStatements && <span className="text-xs">✓</span>}
+                <div 
+                  className="w-4 h-4 border-2 border-black flex items-center justify-center cursor-pointer hover:bg-gray-100"
+                  onClick={() => handleCheckboxChange('checkbox2')}
+                >
+                  {editableCheckboxes.checkbox2 && <span className="text-xs font-bold">✓</span>}
                 </div>
               </div>
               <div className="flex-1 text-xs leading-relaxed">
                 <div className="mb-2">Check here if <strong>any</strong> of the following statements apply to you.</div>
-                <ul className="list-disc list-inside space-y-1 ml-2">
-                  <li>I am a member of a family that has received assistance from Temporary Assistance for Needy Families (TANF) for any 9 months during the past 18 months.</li>
-                  <li>I am a veteran and a member of a family that received Supplemental Nutrition Assistance Program (SNAP) benefits (food stamps) for at least a 3-month period during the past 15 months.</li>
-                  <li>I was referred here by a rehabilitation agency approved by the state, an employment network under the Ticket to Work program, or the Department of Veterans Affairs.</li>
-                  <li>I am at least age 18 but <strong>not</strong> age 40 or older and I am a member of a family that:
+                <ul className="list-none space-y-1 ml-2 text-xs">
+                  <li>• I am a member of a family that has received assistance from Temporary Assistance for Needy Families (TANF) for any 9 months during the past 18 months.</li>
+                  <li>• I am a veteran and a member of a family that received Supplemental Nutrition Assistance Program (SNAP) benefits (food stamps) for at least a 3-month period during the past 15 months.</li>
+                  <li>• I was referred here by a rehabilitation agency approved by the state, an employment network under the Ticket to Work program, or the Department of Veterans Affairs.</li>
+                  <li>• I am at least age 18 but <strong>not</strong> age 40 or older and I am a member of a family that:
                     <div className="ml-4 mt-1">
                       <div><strong>a.</strong> Received SNAP benefits (food stamps) for the past 6 months; <strong>or</strong></div>
                       <div><strong>b.</strong> Received SNAP benefits (food stamps) for at least 3 of the past 5 months, <strong>but</strong> is no longer eligible to receive them.</div>
                     </div>
                   </li>
-                  <li>During the past year, I was convicted of a felony or released from prison for a felony.</li>
-                  <li>I received supplemental security income (SSI) benefits for any month ending during the past 60 days.</li>
-                  <li>I am a veteran and I was unemployed for a period or periods totaling at least 4 weeks but less than 6 months during the past year.</li>
+                  <li>• During the past year, I was convicted of a felony or released from prison for a felony.</li>
+                  <li>• I received supplemental security income (SSI) benefits for any month ending during the past 60 days.</li>
+                  <li>• I am a veteran and I was unemployed for a period or periods totaling at least 4 weeks but less than 6 months during the past year.</li>
                 </ul>
               </div>
             </div>
@@ -421,8 +600,11 @@ export const CompletionStep: React.FC<CompletionStepProps> = ({
             <div className="flex items-start">
               <div className="flex items-center mr-4">
                 <span className="font-bold mr-3">3</span>
-                <div className="w-4 h-4 border border-gray-400 flex items-center justify-center">
-                  {formData.personalInfo.veteranUnemployed4to6Months && <span className="text-xs">✓</span>}
+                <div 
+                  className="w-4 h-4 border-2 border-black flex items-center justify-center cursor-pointer hover:bg-gray-100"
+                  onClick={() => handleCheckboxChange('checkbox3')}
+                >
+                  {editableCheckboxes.checkbox3 && <span className="text-xs font-bold">✓</span>}
                 </div>
               </div>
               <div className="flex-1 text-xs leading-relaxed">
@@ -434,8 +616,11 @@ export const CompletionStep: React.FC<CompletionStepProps> = ({
             <div className="flex items-start">
               <div className="flex items-center mr-4">
                 <span className="font-bold mr-3">4</span>
-                <div className="w-4 h-4 border border-gray-400 flex items-center justify-center">
-                  {formData.personalInfo.veteranDisabledDischarged && <span className="text-xs">✓</span>}
+                <div 
+                  className="w-4 h-4 border-2 border-black flex items-center justify-center cursor-pointer hover:bg-gray-100"
+                  onClick={() => handleCheckboxChange('checkbox4')}
+                >
+                  {editableCheckboxes.checkbox4 && <span className="text-xs font-bold">✓</span>}
                 </div>
               </div>
               <div className="flex-1 text-xs leading-relaxed">
@@ -447,8 +632,11 @@ export const CompletionStep: React.FC<CompletionStepProps> = ({
             <div className="flex items-start">
               <div className="flex items-center mr-4">
                 <span className="font-bold mr-3">5</span>
-                <div className="w-4 h-4 border border-gray-400 flex items-center justify-center">
-                  {formData.personalInfo.veteranDisabledUnemployed6Months && <span className="text-xs">✓</span>}
+                <div 
+                  className="w-4 h-4 border-2 border-black flex items-center justify-center cursor-pointer hover:bg-gray-100"
+                  onClick={() => handleCheckboxChange('checkbox5')}
+                >
+                  {editableCheckboxes.checkbox5 && <span className="text-xs font-bold">✓</span>}
                 </div>
               </div>
               <div className="flex-1 text-xs leading-relaxed">
@@ -460,16 +648,19 @@ export const CompletionStep: React.FC<CompletionStepProps> = ({
             <div className="flex items-start">
               <div className="flex items-center mr-4">
                 <span className="font-bold mr-3">6</span>
-                <div className="w-4 h-4 border border-gray-400 flex items-center justify-center">
-                  {formData.personalInfo.tanfFamily && <span className="text-xs">✓</span>}
+                <div 
+                  className="w-4 h-4 border-2 border-black flex items-center justify-center cursor-pointer hover:bg-gray-100"
+                  onClick={() => handleCheckboxChange('checkbox6')}
+                >
+                  {editableCheckboxes.checkbox6 && <span className="text-xs font-bold">✓</span>}
                 </div>
               </div>
               <div className="flex-1 text-xs leading-relaxed">
                 <div className="mb-2">Check here if you are a member of a family that:</div>
-                <ul className="list-disc list-inside space-y-1 ml-2">
-                  <li>Received TANF payments for at least the past 18 months; <strong>or</strong></li>
-                  <li>Received TANF payments for any 18 months beginning after August 5, 1997, and the earliest 18-month period beginning after August 5, 1997, ended during the past 2 years; <strong>or</strong></li>
-                  <li>Stopped being eligible for TANF payments during the past 2 years because federal or state law limited the maximum time those payments could be made.</li>
+                <ul className="list-none space-y-1 ml-2 text-xs">
+                  <li>• Received TANF payments for at least the past 18 months; <strong>or</strong></li>
+                  <li>• Received TANF payments for any 18 months beginning after August 5, 1997, and the earliest 18-month period beginning after August 5, 1997, ended during the past 2 years; <strong>or</strong></li>
+                  <li>• Stopped being eligible for TANF payments during the past 2 years because federal or state law limited the maximum time those payments could be made.</li>
                 </ul>
               </div>
             </div>
@@ -478,8 +669,11 @@ export const CompletionStep: React.FC<CompletionStepProps> = ({
             <div className="flex items-start">
               <div className="flex items-center mr-4">
                 <span className="font-bold mr-3">7</span>
-                <div className="w-4 h-4 border border-gray-400 flex items-center justify-center">
-                  {formData.personalInfo.unemploymentCompensation && <span className="text-xs">✓</span>}
+                <div 
+                  className="w-4 h-4 border-2 border-black flex items-center justify-center cursor-pointer hover:bg-gray-100"
+                  onClick={() => handleCheckboxChange('checkbox7')}
+                >
+                  {editableCheckboxes.checkbox7 && <span className="text-xs font-bold">✓</span>}
                 </div>
               </div>
               <div className="flex-1 text-xs leading-relaxed">
