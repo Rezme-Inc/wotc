@@ -126,10 +126,8 @@ function AppRefactored() {
             <div className="card-body p-6 lg:p-8">
               {formData.currentStep === 1 && (
                 <WelcomeStep 
-                  onNext={nextStep}
                   userType={formData.userType}
                   onUserTypeChange={handleUserTypeChange}
-                  onLoginToDashboard={loginToDashboard}
                 />
               )}
               

@@ -1,20 +1,15 @@
-import React, { useState } from 'react';
-import { User, Building2, ChevronDown, ChevronUp } from 'lucide-react';
+import React from 'react';
+import { User, Building2 } from 'lucide-react';
 
 interface WelcomeStepProps {
-  onNext: () => void;
   userType: 'candidate' | 'employer';
   onUserTypeChange: (type: 'candidate' | 'employer') => void;
-  onLoginToDashboard?: () => void;
 }
 
 export const WelcomeStep: React.FC<WelcomeStepProps> = ({ 
-  onNext, 
   userType, 
-  onUserTypeChange, 
-  onLoginToDashboard 
+  onUserTypeChange
 }) => {
-  const [showAbout, setShowAbout] = useState(false);
   return (
     <div className="max-w-4xl mx-auto text-center">
       {/* Getting Started Section */}
