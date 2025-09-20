@@ -1,144 +1,213 @@
-@import '@fontsource/poppins/300.css';
-@import '@fontsource/poppins/400.css';
-@import '@fontsource/poppins/500.css';
-@import '@fontsource/poppins/600.css';
-@import '@fontsource/poppins/700.css';
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Base styling aligned with style guide */
-body {
-  font-family: 'Poppins', sans-serif;
-  background-color: #ffffff;
-  color: #000000;
-  line-height: 1.6;
-  font-weight: 400;
+:root {
+  /* Style Guide Colors */
+  --color-background: #FFFFFF;
+  --color-foreground: #000000;
+  --color-primary: #E54747;  /* Cinnabar Red */
+  --color-secondary: #595959; /* Gray35 */
+  --color-gray-light: rgb(249, 250, 251); /* Gray background sections */
+  
+  /* Legacy variables for compatibility */
+  --background: #FFFFFF;
+  --foreground: #000000;
 }
 
-/* Typography scale for consistent hierarchy */
+@theme inline {
+  --color-background: #FFFFFF;
+  --color-foreground: #000000;
+  --color-primary: #E54747;
+  --color-secondary: #595959;
+  --color-gray-light: rgb(249, 250, 251);
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: 'Poppins', sans-serif;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+/* Typography Base Styles */
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Poppins', sans-serif;
   font-weight: 600;
-  color: #000000;
-  line-height: 1.4;
+  color: var(--color-foreground);
 }
 
-/* Component styles for design system consistency */
+/* Button Base Styles */
+button {
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Form Input Base Styles */
+input, textarea, select {
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Component styles using CSS variables */
 .btn-base {
-  @apply font-poppins font-medium transition-all duration-200 rounded-xl border-0;
+  @apply font-medium transition-all duration-200 rounded-xl border-0;
   @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
+  font-family: 'Poppins', sans-serif;
   min-height: 44px; /* Accessibility requirement for touch targets */
 }
 
 .btn-primary {
-  @apply btn-base bg-blue-600 text-white;
-  @apply hover:bg-blue-700 focus:ring-blue-600;
-  @apply shadow-md hover:shadow-lg transform hover:-translate-y-0.5;
-}
-.btn-accent {
-  @apply btn-base bg-cinnabar text-white;
-  @apply hover:bg-red-600 focus:ring-cinnabar;
+  @apply btn-base text-white;
+  background-color: var(--color-primary);
+  @apply hover:opacity-90 focus:ring-2;
   @apply shadow-md hover:shadow-lg transform hover:-translate-y-0.5;
 }
 
 .btn-secondary {
-  @apply btn-base bg-white text-gray35 border border-gray-200;
-  @apply hover:bg-gray-50 hover:text-black focus:ring-gray35;
+  @apply btn-base border;
+  background-color: var(--color-background);
+  color: var(--color-secondary);
+  border-color: #e5e7eb;
+  @apply hover:bg-gray-50 focus:ring-2;
   @apply shadow-sm hover:shadow-md;
 }
 
 .btn-ghost {
-  @apply btn-base bg-transparent text-gray35;
-  @apply hover:bg-green-50 hover:text-green-700 focus:ring-green-500;
+  @apply btn-base bg-transparent;
+  color: var(--color-secondary);
+  @apply hover:bg-gray-50 focus:ring-2;
 }
 
-/* Form elements with accessibility focus */
+/* Form elements */
 .form-input {
-  @apply w-full px-4 py-3 border border-gray-200 rounded-xl font-poppins;
-  @apply bg-white text-black placeholder-gray35;
+  @apply w-full px-4 py-3 border border-gray-200 rounded-xl;
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: 'Poppins', sans-serif;
   @apply transition-all duration-200 shadow-sm;
-  @apply focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent;
+  @apply focus:outline-none focus:ring-2 focus:border-transparent;
   @apply hover:shadow-md hover:border-gray-300;
   min-height: 44px; /* Accessibility compliance */
 }
 
-.form-input:disabled {
-  @apply bg-gray-50 text-gray35 cursor-not-allowed;
+.form-input::placeholder {
+  color: var(--color-secondary);
 }
+
+.form-input:disabled {
+  @apply bg-gray-50 cursor-not-allowed;
+  color: var(--color-secondary);
+}
+
 .form-input.is-valid {
   @apply border-green-500 focus:ring-green-500 focus:border-green-500;
 }
 
 .form-input.is-invalid {
-  @apply border-red-500 focus:ring-red-500 focus:border-red-500 bg-red-50 border-2;
-}
-.form-label {
-  @apply block text-sm font-medium text-black mb-2 font-poppins;
+  border-color: var(--color-primary);
+  @apply focus:ring-red-500 bg-red-50 border-2;
 }
 
+.form-label {
+  @apply block text-sm font-medium mb-2;
+  color: var(--color-foreground);
+  font-family: 'Poppins', sans-serif;
+}
 
 .form-hint {
-  @apply text-sm text-gray35 mt-1 font-poppins font-light leading-relaxed;
+  @apply text-sm mt-1 font-light leading-relaxed;
+  color: var(--color-secondary);
+  font-family: 'Poppins', sans-serif;
 }
 
 .form-error {
-  @apply text-sm text-cinnabar mt-1 font-poppins font-medium;
+  @apply text-sm mt-1 font-medium;
+  color: var(--color-primary);
+  font-family: 'Poppins', sans-serif;
 }
 
-.valid-feedback {
-  @apply text-sm text-green-600 mt-1 font-poppins hidden;
+/* Card components */
+.card {
+  background-color: var(--color-background);
+  @apply rounded-xl border border-gray-100 shadow-sm;
+  @apply hover:shadow-md transition-shadow duration-200;
 }
 
-.invalid-feedback {
-  @apply text-sm text-red-600 mt-1 font-poppins font-medium hidden;
+.card-header {
+  @apply px-6 py-4 border-b border-gray-100;
 }
 
-.form-input.is-valid ~ .valid-feedback {
-  @apply block;
+.card-body {
+  @apply px-6 py-4;
 }
 
-.form-input.is-invalid ~ .invalid-feedback {
-  @apply block;
+.card-footer {
+  @apply px-6 py-4 border-t border-gray-100 rounded-b-xl;
+  background-color: var(--color-gray-light);
 }
 
-/* Form check styles (checkboxes) */
-.form-check {
-  @apply flex items-start gap-3 mb-3;
+/* Layout containers */
+.container-main {
+  background-color: transparent;
 }
 
-.form-check-input {
-  @apply w-5 h-5 text-blue-600 bg-white border-gray-300 rounded;
-  @apply focus:ring-blue-500 focus:ring-2 transition-colors duration-200;
-  margin-top: 0.125rem; /* Align with first line of text */
+.content-wrapper {
+  @apply max-w-6xl mx-auto px-4 py-4;
 }
 
-.form-check-label {
-  @apply text-black font-poppins leading-relaxed;
+.section-spacing {
+  @apply space-y-6;
 }
 
-/* Grid system similar to Bootstrap */
-.row {
-  @apply flex flex-wrap -mx-3;
+/* Step indicators */
+.step-complete {
+  @apply bg-green-600 text-white shadow-sm;
 }
 
-.col-12 {
-  @apply w-full px-3 mb-6;
+.step-current {
+  @apply bg-orange-500 text-white shadow-lg ring-2 ring-orange-300;
 }
 
-.col-md-6 {
-  @apply w-full px-3 mb-6;
+.step-pending {
+  @apply bg-gray-400 text-white shadow-sm;
 }
 
-.col-md-4 {
-  @apply w-full px-3 mb-6;
+/* Status badges */
+.status-badge {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium;
+  font-family: 'Poppins', sans-serif;
 }
 
-.col-md-3 {
-  @apply w-full px-3 mb-6;
+.status-success {
+  @apply status-badge bg-green-50 text-green-700 border border-green-200;
 }
 
+.status-warning {
+  @apply status-badge bg-yellow-50 text-yellow-700 border border-yellow-200;
+}
+
+.status-error {
+  @apply status-badge bg-red-50 border border-red-200;
+  color: var(--color-primary);
+}
+
+.status-info {
+  @apply status-badge bg-blue-50 text-blue-700 border border-blue-200;
+}
+
+/* Accessibility enhancements */
+.sr-only {
+  @apply absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0;
+}
+
+.focus-visible {
+  @apply outline-none ring-2 ring-offset-2;
+  --tw-ring-color: var(--color-foreground);
+}
+
+/* Responsive design helpers */
 @media (min-width: 768px) {
   .col-md-6 {
     @apply w-1/2;
@@ -152,123 +221,17 @@ h1, h2, h3, h4, h5, h6 {
     @apply w-1/4;
   }
 }
-/* Card components for content organization */
-.card {
-  @apply bg-white rounded-xl border border-gray-100 shadow-sm;
-  @apply hover:shadow-md transition-shadow duration-200;
-}
-
-.card-header {
-  @apply px-6 py-4 border-b border-gray-100;
-}
-
-.card-body {
-  @apply px-6 py-4;
-}
-
-.card-footer {
-  @apply px-6 py-4 border-t border-gray-100 bg-gray-50 rounded-b-xl;
-}
-
-/* Status and feedback styling */
-.status-badge {
-  @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium;
-}
-
-.status-success {
-  @apply status-badge bg-green-50 text-green-700 border border-green-200;
-}
-
-.status-warning {
-  @apply status-badge bg-yellow-50 text-yellow-700 border border-yellow-200;
-}
-
-.status-error {
-  @apply status-badge bg-red-50 text-red-700 border border-red-200;
-}
-
-.status-info {
-  @apply status-badge bg-blue-50 text-blue-700 border border-blue-200;
-}
-
-/* Enhanced error banner styling */
-.error-banner {
-  @apply bg-red-50 border border-red-200 rounded-xl p-6 mb-8 shadow-sm;
-  @apply border-l-4 border-l-red-500;
-}
-.error-banner-header {
-  @apply text-red-800 font-semibold mb-3 font-poppins flex items-center;
-}
-.error-banner-list {
-  @apply space-y-2;
-}
-.error-banner-item {
-  @apply text-red-700 flex items-start font-poppins text-sm;
-}
-
-/* Field error container styling */
-.field-error-container {
-  @apply relative;
-}
-.field-error-icon {
-  @apply absolute right-3 top-1/2 transform -translate-y-1/2 text-red-500 w-5 h-5;
-}
-.field-error-text {
-  @apply text-sm text-red-600 mt-1 font-poppins font-medium;
-}
-
-/* Navigation and step indicators */
-.step-indicator-line {
-  @apply transition-all duration-300 ease-in-out;
-}
-
-.step-complete {
-  @apply bg-green-600 text-white shadow-sm;
-}
-
-.step-current {
-  @apply bg-orange-500 text-white shadow-lg ring-2 ring-orange-300;
-}
-
-.step-pending {
-  @apply bg-gray-400 text-white shadow-sm;
-}
-
-/* Layout containers */
-.container-main {
-  @apply bg-transparent;
-}
-
-.content-wrapper {
-  @apply max-w-6xl mx-auto px-4 py-4;
-}
-
-.section-spacing {
-  @apply space-y-6;
-}
-
-/* Accessibility enhancements */
-.sr-only {
-  @apply absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0;
-}
-
-/* Focus visible for better keyboard navigation */
-.focus-visible {
-  @apply outline-none ring-2 ring-black ring-offset-2;
-}
 
 /* High contrast mode support */
 @media (prefers-contrast: high) {
   .btn-primary {
-    @apply ring-2 ring-black;
-  }
-  
-  .btn-accent {
-    @apply ring-2 ring-cinnabar;
+    @apply ring-2;
+    --tw-ring-color: var(--color-foreground);
   }
   
   .form-input {
-    @apply border-2 border-black;
+    @apply border-2;
+    border-color: var(--color-foreground);
   }
 }
 
@@ -290,7 +253,8 @@ h1, h2, h3, h4, h5, h6 {
   }
   
   body {
-    @apply text-black bg-white;
+    background: var(--color-background);
+    color: var(--color-foreground);
   }
 }
 
@@ -304,9 +268,10 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-gray35 rounded-full;
+  background-color: var(--color-secondary);
+  @apply rounded-full;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-black;
+  background-color: var(--color-foreground);
 }

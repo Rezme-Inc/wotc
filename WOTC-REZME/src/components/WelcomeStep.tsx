@@ -21,18 +21,18 @@ export const WelcomeStep: React.FC<WelcomeStepProps> = ({
       <div className="mb-6 card p-6 bg-green-50 border-green-200">
         <div className="flex items-center justify-center mb-4">
           <div className="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
-          <h2 className="text-xl font-semibold text-black font-poppins">
+          <h2 className="text-lg md:text-xl font-semibold text-black font-poppins">
             This strengthens your job application
           </h2>
         </div>
-        <p className="text-gray35 font-poppins text-center">
+        <p className="text-sm md:text-base text-gray35 font-poppins text-center">
           Takes about 5 minutes and helps employers see why hiring you benefits everyone.
         </p>
       </div>
 
       {/* User Type Toggle */}
       <div className="mb-8">
-        <h2 className="text-2xl font-semibold text-black mb-8 font-poppins">
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-black mb-8 font-poppins">
           Who is filling out this form?
         </h2>
         <div className="card inline-flex p-2 bg-gray-50 border-gray-200">
@@ -75,15 +75,15 @@ export const WelcomeStep: React.FC<WelcomeStepProps> = ({
       <div className="mb-8 animate-fade-in">
         {userType === 'candidate' ? (
           <div className="card p-8 bg-gray-50 border-gray-100 max-w-3xl mx-auto">
-            <h3 className="text-xl font-semibold text-black mb-4 font-poppins">
+            <h3 className="text-lg md:text-xl font-semibold text-black mb-4 font-poppins">
               What You'll Do
             </h3>
-            <p className="text-gray35 font-poppins leading-relaxed mb-6">
+            <p className="text-sm md:text-base text-gray35 font-poppins leading-relaxed mb-6">
               This form helps employers access hiring incentives designed to give qualified candidates 
               like you a better chance at employment. Completing it strengthens your application and 
               demonstrates your eligibility for these opportunity programs.
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs md:text-sm">
               <div className="flex items-center text-gray35">
                 <div className="w-2 h-2 bg-green-500 rounded-full mr-3 flex-shrink-0"></div>
                 <span>Share basic information about yourself</span>
@@ -104,14 +104,14 @@ export const WelcomeStep: React.FC<WelcomeStepProps> = ({
           </div>
         ) : (
           <div className="card p-8 bg-gray-50 border-gray-100 max-w-3xl mx-auto">
-            <h3 className="text-xl font-semibold text-black mb-4 font-poppins">
+            <h3 className="text-lg md:text-xl font-semibold text-black mb-4 font-poppins">
               What You'll Do
             </h3>
-            <p className="text-gray35 font-poppins leading-relaxed mb-6">
+            <p className="text-sm md:text-base text-gray35 font-poppins leading-relaxed mb-6">
               Set up your company information and manage tax credit applications for your employees. 
               Streamline your hiring process while maximizing available tax savings.
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs md:text-sm">
               <div className="flex items-center text-gray35">
                 <div className="w-2 h-2 bg-green-500 rounded-full mr-3 flex-shrink-0"></div>
                 <span>Add your company information</span>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useFormState } from './hooks/useFormState';
 import { useEmployerState } from './hooks/useEmployerState';
 import { StepIndicator } from './components/StepIndicator';
@@ -13,7 +13,39 @@ import DocumentUploadStep from './components/DocumentUploadStep';
 import { EmployerDashboard } from './components/EmployerDashboard';
 import { Footer } from './components/Footer';
 import { Header } from './components/Header';
-import { CheckCircle } from 'lucide-react';
+import { CheckCircle, ChevronDown, ChevronUp } from 'lucide-react';
+
+const WOTCDropdown: React.FC = () => {
+  const [showAbout, setShowAbout] = useState(false);
+  
+  return (
+    <>
+      <button
+        onClick={() => setShowAbout(!showAbout)}
+        className="flex items-center justify-center w-full p-4 text-sm text-gray35 hover:text-black transition-colors duration-200 focus-visible"
+        aria-expanded={showAbout}
+        aria-label="Toggle Work Opportunity Tax Credit information"
+      >
+        <span className="font-medium">About the Work Opportunity Tax Credit</span>
+        {showAbout ? (
+          <ChevronUp className="w-4 h-4 ml-2" />
+        ) : (
+          <ChevronDown className="w-4 h-4 ml-2" />
+        )}
+      </button>
+      
+      {showAbout && (
+        <div className="card p-6 bg-blue-50 border-blue-200 animate-fade-in">
+          <p className="text-sm text-gray35 font-poppins leading-relaxed">
+            The WOTC program provides federal tax credits to employers who hire individuals 
+            from certain target groups that have consistently faced significant barriers to 
+            employment. Credits can range from $1,200 to $9,600 per qualified employee.
+          </p>
+        </div>
+      )}
+    </>
+  );
+};
 
 function AppRefactored() {
   const {
@@ -62,11 +94,11 @@ function AppRefactored() {
       <Header />
       
       {/* Full Width Gray Section - Title and Step Indicator */}
-      <section className="bg-gray-50 py-6">
+      <section style={{backgroundColor: 'var(--color-gray-light)', paddingTop: '5rem', paddingBottom: '5rem'}}>
         <div className="max-w-6xl mx-auto px-6">
           {/* Header */}
           <header className="text-center mb-6">
-            <h1 className="text-4xl font-semibold mb-4 font-poppins">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 font-poppins">
               <span className="text-black">Réz</span>
               <span className="text-red-600">me</span> Employment Application
             </h1>
@@ -84,9 +116,10 @@ function AppRefactored() {
         </div>
       </section>
       
-      <div className="container-main flex-1">
-        <div className="content-wrapper">
-          <div className="max-w-6xl mx-auto">
+      <section style={{backgroundColor: 'var(--color-background)', paddingTop: '5rem', paddingBottom: '5rem'}}>
+        <div className="container-main flex-1">
+          <div className="content-wrapper">
+            <div className="max-w-6xl mx-auto">
 
           {/* Main Content Card */}
           <main>
@@ -192,18 +225,18 @@ function AppRefactored() {
               )}
             </div>
           </main>
+          </div>
         </div>
-      </div>
-      </div>
+        </div>
+      </section>
       
       {/* Gray Background Section for Action Buttons and Below */}
-      <section className="bg-gray-50 flex-1">
-        <div className="container-main">
-          <div className="max-w-6xl mx-auto px-4">
+      <section className="flex-1" style={{backgroundColor: 'var(--color-gray-light)', paddingTop: '5rem', paddingBottom: '5rem'}}>
+        <div className="max-w-6xl mx-auto px-4">
               
               {/* Action buttons for WelcomeStep */}
               {formData.currentStep === 1 && (
-                <div className="max-w-4xl mx-auto text-center pt-2">
+                <div className="max-w-4xl mx-auto text-center">
                   <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
                     <button
                       onClick={nextStep}
@@ -226,12 +259,7 @@ function AppRefactored() {
 
                   {/* Additional information */}
                   <div className="max-w-2xl mx-auto">
-                    <button
-                      className="flex items-center justify-center w-full p-4 text-sm text-gray35 hover:text-black transition-colors duration-200 focus-visible"
-                      aria-label="Toggle Work Opportunity Tax Credit information"
-                    >
-                      <span className="font-medium">About the Work Opportunity Tax Credit</span>
-                    </button>
+                    <WOTCDropdown />
                   </div>
                 </div>
               )}
@@ -245,7 +273,6 @@ function AppRefactored() {
                   </span>
                 </div>
               </div>
-          </div>
         </div>
       </section>
       
