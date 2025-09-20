@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useFormState } from './hooks/useFormState';
 import { useEmployerState } from './hooks/useEmployerState';
 import { StepIndicator } from './components/StepIndicator';
@@ -13,7 +13,39 @@ import DocumentUploadStep from './components/DocumentUploadStep';
 import { EmployerDashboard } from './components/EmployerDashboard';
 import { Footer } from './components/Footer';
 import { Header } from './components/Header';
-import { CheckCircle, FileText } from 'lucide-react';
+import { CheckCircle, ChevronDown, ChevronUp } from 'lucide-react';
+
+const WOTCDropdown: React.FC = () => {
+  const [showAbout, setShowAbout] = useState(false);
+  
+  return (
+    <>
+      <button
+        onClick={() => setShowAbout(!showAbout)}
+        className="flex items-center justify-center w-full p-4 text-sm text-gray35 hover:text-black transition-colors duration-200 focus-visible"
+        aria-expanded={showAbout}
+        aria-label="Toggle Work Opportunity Tax Credit information"
+      >
+        <span className="font-medium">About the Work Opportunity Tax Credit</span>
+        {showAbout ? (
+          <ChevronUp className="w-4 h-4 ml-2" />
+        ) : (
+          <ChevronDown className="w-4 h-4 ml-2" />
+        )}
+      </button>
+      
+      {showAbout && (
+        <div className="card p-6 bg-blue-50 border-blue-200 animate-fade-in">
+          <p className="text-sm text-gray35 font-poppins leading-relaxed">
+            The WOTC program provides federal tax credits to employers who hire individuals 
+            from certain target groups that have consistently faced significant barriers to 
+            employment. Credits can range from $1,200 to $9,600 per qualified employee.
+          </p>
+        </div>
+      )}
+    </>
+  );
+};
 
 function AppRefactored() {
   const {
@@ -60,17 +92,18 @@ function AppRefactored() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <div className="container-main flex-1">
-        <div className="content-wrapper">
-          <div className="max-w-6xl mx-auto">
+      
+      {/* Full Width Gray Section - Title and Step Indicator */}
+      <section style={{backgroundColor: 'var(--color-gray-light)', paddingTop: '5rem', paddingBottom: '5rem'}}>
+        <div className="max-w-6xl mx-auto px-6">
           {/* Header */}
-          <header className="text-center mb-12">
-          <h1 className="text-4xl font-semibold mb-4 font-poppins">
-            <span className="text-black">Réz</span>
-            <span className="text-red-600">me</span> WOTC Compliance Assistant
-          </h1>
+          <header className="text-center mb-6">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 font-poppins">
+              <span className="text-black">Réz</span>
+              <span className="text-red-600">me</span> Employment Application
+            </h1>
             <p className="text-gray35 font-poppins font-light text-lg max-w-2xl mx-auto">
-              Work Opportunity Tax Credit {formData.userType === 'candidate' ? 'Pre-Screening' : 'Employer'} Portal
+              Complete this quick form to keep your application moving forward
             </p>
           </header>
 
@@ -80,16 +113,21 @@ function AppRefactored() {
             totalSteps={totalSteps} 
             userType={formData.userType} 
           />
+        </div>
+      </section>
+      
+      <section style={{backgroundColor: 'var(--color-background)', paddingTop: '5rem', paddingBottom: '5rem'}}>
+        <div className="container-main flex-1">
+          <div className="content-wrapper">
+            <div className="max-w-6xl mx-auto">
 
           {/* Main Content Card */}
-          <main className="card animate-fade-in">
-            <div className="card-body p-8 lg:p-12">
+          <main>
+            <div className="card-body p-6 lg:p-8">
               {formData.currentStep === 1 && (
                 <WelcomeStep 
-                  onNext={nextStep}
                   userType={formData.userType}
                   onUserTypeChange={handleUserTypeChange}
-                  onLoginToDashboard={loginToDashboard}
                 />
               )}
               
@@ -189,19 +227,56 @@ function AppRefactored() {
               )}
             </div>
           </main>
-
-          {/* Security Badge */}
-          <div className="text-center mt-12 py-4">
-            <div className="flex items-center justify-center mb-4">
-              <CheckCircle className="w-5 h-5 text-cinnabar mr-2" />
-              <span className="text-sm text-gray35 font-poppins">
-                Secure & WOTC Compliant
-              </span>
-            </div>
           </div>
         </div>
-      </div>
-      </div>
+        </div>
+      </section>
+      
+      {/* Gray Background Section for Action Buttons and Below */}
+      <section className="flex-1" style={{backgroundColor: 'var(--color-gray-light)', paddingTop: '5rem', paddingBottom: '5rem'}}>
+        <div className="max-w-6xl mx-auto px-4">
+              
+              {/* Action buttons for WelcomeStep */}
+              {formData.currentStep === 1 && (
+                <div className="max-w-4xl mx-auto text-center">
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
+                    <button
+                      onClick={nextStep}
+                      className="btn-primary px-8 py-4 text-lg font-poppins min-w-[200px]"
+                      aria-label={`Start ${formData.userType === 'candidate' ? 'candidate' : 'employer'} application process`}
+                    >
+                      {formData.userType === 'candidate' ? 'Start My Application' : 'Set Up My Company'}
+                    </button>
+                    
+                    {formData.userType === 'employer' && loginToDashboard && (
+                      <button
+                        onClick={loginToDashboard}
+                        className="btn-secondary px-8 py-4 text-lg font-poppins min-w-[200px]"
+                        aria-label="Access existing employer dashboard"
+                      >
+                        View My Dashboard
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Additional information */}
+                  <div className="max-w-2xl mx-auto">
+                    <WOTCDropdown />
+                  </div>
+                </div>
+              )}
+
+              {/* Security Badge */}
+              <div className="text-center mt-8 py-4">
+                <div className="flex items-center justify-center mb-4">
+                  <CheckCircle className="w-5 h-5 text-cinnabar mr-2" />
+                  <span className="text-sm text-gray35 font-poppins">
+                    Secure & WOTC Compliant
+                  </span>
+                </div>
+              </div>
+        </div>
+      </section>
       
       <Footer />
     </div>
