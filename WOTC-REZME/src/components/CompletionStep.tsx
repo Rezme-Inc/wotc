@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Download, FileText, FileSignature as Signature, AlertCircle, AlertTriangle } from 'lucide-react';
-import { WOTCFormData } from '../types/wotc';
+import React, { useState, useEffect, useRef } from 'react';
+import { Download, FileText, FileSignature as Signature, AlertCircle, AlertTriangle, Upload, ExternalLink, Eye, X, ChevronDown, ChevronUp } from 'lucide-react';
+import { WOTCFormData, DocumentUpload } from '../types/wotc';
 import { formatDate } from '../utils/dateValidation';
 
 interface CompletionStepProps {
@@ -49,6 +49,13 @@ export const CompletionStep: React.FC<CompletionStepProps> = ({
     checkbox6: false,
     checkbox7: false
   });
+
+  // IRS Form Upload functionality
+  const [irsFormUploaded, setIrsFormUploaded] = useState<DocumentUpload | null>(null);
+  const [dragActive, setDragActive] = useState(false);
+  const [previewDocument, setPreviewDocument] = useState<DocumentUpload | null>(null);
+  const [isAlternativeCollapsed, setIsAlternativeCollapsed] = useState(true);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     const handleSubmit = () => {
     const newErrors: string[] = [];
@@ -174,6 +181,106 @@ export const CompletionStep: React.FC<CompletionStepProps> = ({
     }));
   };
 
+  // IRS Form Download function
+  const handleDownloadIRSForm = () => {
+    const link = document.createElement('a');
+    link.href = 'https://www.irs.gov/pub/irs-pdf/f8850.pdf';
+    link.download = 'IRS_Form_8850.pdf';
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // File handling functions for IRS form upload
+  const formatFileSize = (bytes: number): string => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
+  const isPreviewable = (fileType: string) => {
+    return fileType.includes('pdf') ||
+           fileType.includes('image/') ||
+           fileType.includes('text/') ||
+           fileType.includes('application/vnd.openxmlformats-officedocument.wordprocessingml.document') ||
+           fileType.includes('application/msword') ||
+           fileType.includes('heic') ||
+           fileType.includes('heif');
+  };
+
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleFiles(e.dataTransfer.files);
+    }
+  };
+
+  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    if (e.target.files && e.target.files[0]) {
+      handleFiles(e.target.files);
+    }
+  };
+
+  const handleFiles = (files: FileList) => {
+    const file = files[0];
+    if (file) {
+      const newDocument: DocumentUpload = {
+        id: `irs-form-${Date.now()}`,
+        targetGroupId: 'irs-form-8850',
+        targetGroupName: 'IRS Form 8850',
+        fileName: file.name,
+        fileType: file.type,
+        fileSize: file.size,
+        uploadDate: new Date().toISOString(),
+        file: file
+      };
+      setIrsFormUploaded(newDocument);
+    }
+  };
+
+  const removeIRSForm = () => {
+    setIrsFormUploaded(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const handlePreviewDocument = (document: DocumentUpload) => {
+    setPreviewDocument(document);
+  };
+
+  const closePreview = () => {
+    setPreviewDocument(null);
+  };
+
+  const createFilePreviewURL = (file: File): string => {
+    return URL.createObjectURL(file);
+  };
+
+  const getFilePreviewURL = (document: DocumentUpload): string => {
+    if (document.file) {
+      return createFilePreviewURL(document.file);
+    }
+    return '';
+  };
+
   return (
     <div className="max-w-5xl mx-auto">
       <div className="text-center mb-8">
@@ -217,6 +324,28 @@ export const CompletionStep: React.FC<CompletionStepProps> = ({
           <div>
             <p className="text-blue-800 text-sm font-poppins font-medium">
               <strong>Editable Form:</strong> You can click on any field or checkbox below to make corrections before final submission.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Official IRS Form Link */}
+      <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+        <div className="flex items-center">
+          <div className="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center mr-3">
+            <FileText className="w-4 h-4 text-white" />
+          </div>
+          <div>
+            <p className="text-green-800 text-sm font-poppins font-medium">
+              <strong>Official IRS Form:</strong> Need to reference the original? 
+              <a 
+                href="https://www.irs.gov/pub/irs-pdf/f8850.pdf" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-green-700 hover:text-green-900 underline ml-1 font-semibold"
+              >
+                View the official IRS Form 8850 PDF
+              </a>
             </p>
           </div>
         </div>
@@ -779,6 +908,160 @@ export const CompletionStep: React.FC<CompletionStepProps> = ({
         </div>
       </div>
 
+      {/* IRS Form Options */}
+      <div 
+        className="rounded-lg mb-6 border" 
+        style={{ 
+          backgroundColor: isAlternativeCollapsed ? '#f3eee8' : 'white', 
+          borderColor: isAlternativeCollapsed ? '#d4c5b0' : '#e5e7eb' 
+        }}
+      >
+        {/* Collapsible Header */}
+        <div 
+          className="flex items-center justify-between p-4 cursor-pointer transition-colors duration-200 rounded-t-lg"
+          onClick={() => setIsAlternativeCollapsed(!isAlternativeCollapsed)}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = isAlternativeCollapsed ? '#eee4d6' : '#f9fafb'}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+        >
+          <div className="flex items-center">
+            <div 
+              className="w-8 h-8 rounded-full flex items-center justify-center mr-4" 
+              style={{ backgroundColor: isAlternativeCollapsed ? '#8b6f47' : '#1f2937' }}
+            >
+              <FileText className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <h3 
+                className="text-lg font-poppins font-semibold" 
+                style={{ color: isAlternativeCollapsed ? '#5d4e37' : '#111827' }}
+              >
+                Alternative: Fill Out Official IRS Form Manually
+              </h3>
+              <p 
+                className="text-sm font-poppins" 
+                style={{ color: isAlternativeCollapsed ? '#7a6652' : '#6b7280' }}
+              >
+                {isAlternativeCollapsed ? 'Click to expand' : 'Download, fill out manually, and upload back'}
+              </p>
+            </div>
+          </div>
+          <div style={{ color: isAlternativeCollapsed ? '#8b6f47' : '#1f2937' }}>
+            {isAlternativeCollapsed ? (
+              <ChevronDown className="w-5 h-5" />
+            ) : (
+              <ChevronUp className="w-5 h-5" />
+            )}
+          </div>
+        </div>
+
+        {/* Collapsible Content */}
+        {!isAlternativeCollapsed && (
+          <div className="px-4 pb-6">
+            <div className="pl-12"> {/* Align with header content */}
+              <p className="text-sm font-poppins mb-4 text-gray-700">
+                Prefer to fill out the official IRS form yourself? You can download the blank form, complete it manually, and upload it back to complete your application.
+              </p>
+              
+              <div className="flex flex-wrap gap-3 mb-4">
+                <button
+                  onClick={handleDownloadIRSForm}
+                  className="bg-black hover:bg-gray-800 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 flex items-center text-sm font-poppins shadow-sm hover:shadow-md"
+                >
+                  <Download className="mr-2 w-4 h-4" />
+                  Download Blank Form
+                </button>
+                
+                <a 
+                  href="https://www.irs.gov/pub/irs-pdf/f8850.pdf" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="bg-white hover:bg-gray-50 text-black border border-gray-300 font-medium py-2 px-4 rounded-lg transition-all duration-200 flex items-center text-sm font-poppins shadow-sm hover:shadow-md"
+                >
+                  <ExternalLink className="mr-2 w-4 h-4" />
+                  View in New Tab
+                </a>
+              </div>
+
+              {/* Upload Section */}
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 bg-gray-50">
+                <h4 className="text-gray-900 font-medium mb-3 font-poppins">Upload Your Completed Form</h4>
+                
+                {!irsFormUploaded ? (
+                  <div
+                    className={`text-center ${dragActive ? 'bg-gray-100' : ''}`}
+                    onDragEnter={handleDrag}
+                    onDragLeave={handleDrag}
+                    onDragOver={handleDrag}
+                    onDrop={handleDrop}
+                  >
+                    <Upload className="mx-auto h-12 w-12 text-gray-500 mb-4" />
+                    <p className="text-sm text-gray-700 mb-2 font-poppins">
+                      Drag and drop your completed IRS Form 8850 here, or
+                    </p>
+                    <button
+                      onClick={() => fileInputRef.current?.click()}
+                      className="text-black hover:text-gray-700 underline font-medium text-sm font-poppins transition-colors"
+                    >
+                      browse to upload
+                    </button>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      onChange={handleFileInput}
+                      accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.heic,.heif"
+                      className="hidden"
+                    />
+                    <p className="text-xs text-gray-500 mt-2 font-poppins">
+                      Supports: PDF, DOC, DOCX, JPG, PNG, HEIC
+                    </p>
+                  </div>
+                ) : (
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <FileText className="w-5 h-5 text-green-600 mr-3" />
+                        <div>
+                          <p className="font-medium text-green-800 font-poppins">{irsFormUploaded.fileName}</p>
+                          <p className="text-sm text-green-600 font-poppins">
+                            {formatFileSize(irsFormUploaded.fileSize)} • Uploaded {new Date(irsFormUploaded.uploadDate).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        {isPreviewable(irsFormUploaded.fileType) && (
+                          <button
+                            onClick={() => handlePreviewDocument(irsFormUploaded)}
+                            className="text-green-600 hover:text-green-800 p-1 rounded transition-colors"
+                            title="Preview document"
+                          >
+                            <Eye size={18} />
+                          </button>
+                        )}
+                        <button
+                          onClick={removeIRSForm}
+                          className="text-red-500 hover:text-red-700 p-1 rounded transition-colors"
+                          title="Remove document"
+                        >
+                          <X size={18} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+              
+              {irsFormUploaded && (
+                <div className="mt-4 p-3 bg-green-100 border border-green-300 rounded-lg">
+                  <p className="text-green-800 text-sm font-poppins font-medium">
+                    ✅ Great! Your completed IRS Form 8850 has been uploaded and will be submitted with your application.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+
       <div className="text-center mt-12">
         <button
           onClick={handleSubmit}
@@ -794,6 +1077,85 @@ export const CompletionStep: React.FC<CompletionStepProps> = ({
           }
         </p>
       </div>
+
+      {/* Document Preview Modal */}
+      {previewDocument && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl max-w-4xl max-h-[90vh] overflow-hidden shadow-2xl">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <div>
+                <h3 className="text-xl font-semibold text-black font-poppins">{previewDocument.fileName}</h3>
+                <p className="text-sm text-gray35 font-poppins">
+                  {formatFileSize(previewDocument.fileSize)} • {previewDocument.targetGroupName}
+                </p>
+              </div>
+              <button
+                onClick={closePreview}
+                className="text-gray-400 hover:text-gray-600 transition-colors p-2 rounded-lg hover:bg-gray-100"
+              >
+                <X size={24} />
+              </button>
+            </div>
+            
+            <div className="p-6 max-h-[70vh] overflow-auto">
+              {previewDocument.fileType.includes('pdf') ? (
+                <iframe
+                  src={getFilePreviewURL(previewDocument)}
+                  className="w-full h-96 border border-gray-200 rounded-lg"
+                  title="Document Preview"
+                />
+              ) : (previewDocument.fileType.includes('image/') ||
+                    previewDocument.fileType.includes('heic') ||
+                    previewDocument.fileType.includes('heif')) ? (
+                <img
+                  src={getFilePreviewURL(previewDocument)}
+                  alt="Document Preview"
+                  className="max-w-full h-auto rounded-lg shadow-sm"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                    const fallback = target.nextElementSibling as HTMLElement;
+                    if (fallback) fallback.style.display = 'block';
+                  }}
+                />
+              ) : (previewDocument.fileType.includes('application/vnd.openxmlformats-officedocument.wordprocessingml.document') ||
+                    previewDocument.fileType.includes('application/msword')) ? (
+                <div className="text-center py-12">
+                  <FileText className="mx-auto h-16 w-16 text-gray-400 mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2 font-poppins">Document Uploaded</h3>
+                  <p className="text-gray35 mb-4 font-poppins">
+                    {previewDocument.fileName} has been successfully uploaded.
+                  </p>
+                  <a
+                    href={getFilePreviewURL(previewDocument)}
+                    download={previewDocument.fileName}
+                    className="inline-flex items-center px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-poppins"
+                  >
+                    <Download className="mr-2 w-4 h-4" />
+                    Download Document
+                  </a>
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <FileText className="mx-auto h-16 w-16 text-gray-400 mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2 font-poppins">Preview Not Available</h3>
+                  <p className="text-gray35 mb-4 font-poppins">
+                    This file type cannot be previewed in the browser.
+                  </p>
+                  <a
+                    href={getFilePreviewURL(previewDocument)}
+                    download={previewDocument.fileName}
+                    className="inline-flex items-center px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-poppins"
+                  >
+                    <Download className="mr-2 w-4 h-4" />
+                    Download Document
+                  </a>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
