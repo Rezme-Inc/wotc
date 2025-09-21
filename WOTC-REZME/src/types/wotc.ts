@@ -42,6 +42,30 @@ export interface DocumentUpload {
   file?: File;
 }
 
+export interface EmployerInfo {
+  companyName: string;
+  contactName: string;
+  contactEmail: string;
+  contactPhone: string;
+  jobTitle: string;
+  streetAddress: string;
+  city: string;
+  state: string;
+  zipCode: string;
+}
+
+export interface WOTCApplication {
+  id: string;
+  employerInfo: EmployerInfo;
+  personalInfo: PersonalInfo;
+  targetGroups: TargetGroup[];
+  importantDates: ImportantDates;
+  documents: DocumentUpload[];
+  isComplete: boolean;
+  createdDate: string;
+  submittedDate?: string;
+}
+
 export interface WOTCFormData {
   personalInfo: PersonalInfo;
   targetGroups: TargetGroup[];
@@ -51,6 +75,12 @@ export interface WOTCFormData {
   isComplete: boolean;
   userType: 'candidate' | 'employer';
   documentationComplete: boolean;
+}
+
+export interface UserProfile {
+  email: string;
+  applications: WOTCApplication[];
+  currentApplicationId?: string;
 }
 
 export interface ValidationResult {

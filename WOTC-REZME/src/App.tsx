@@ -11,6 +11,9 @@ import { ValidationStep } from './components/ValidationStep';
 import { CompletionStep } from './components/CompletionStep';
 import DocumentUploadStep from './components/DocumentUploadStep';
 import { EmployerDashboard } from './components/EmployerDashboard';
+import { SignUpLogin } from './components/SignUpLogin';
+import { CandidateDashboard } from './components/CandidateDashboard';
+import { EmployerSelectionStep } from './components/EmployerSelectionStep';
 import { Footer } from './components/Footer';
 import { Header } from './components/Header';
 import { CheckCircle, ChevronDown, ChevronUp } from 'lucide-react';
@@ -50,7 +53,12 @@ const WOTCDropdown: React.FC = () => {
 function AppRefactored() {
   const {
     formData,
+    userProfile,
+    currentEmployerInfo,
     showDashboard,
+    showSignUpLogin,
+    showEmployerSelection,
+    isAuthenticated,
     totalSteps,
     updatePersonalInfo,
     updateTargetGroups,
@@ -59,8 +67,14 @@ function AppRefactored() {
     handleUserTypeChange,
     nextStep,
     previousStep,
+    startNewApplication,
+    handleEmployerSelection,
+    cancelEmployerSelection,
     completeForm,
+    handleSignUpComplete,
+    handleLoginComplete,
     loginToDashboard,
+    logout,
     resetForm
   } = useFormState();
 
@@ -69,24 +83,64 @@ function AppRefactored() {
     updateEmployerInfo
   } = useEmployerState();
 
-  if (showDashboard) {
+  // Show employer selection page for logged-in users starting new application
+  if (showEmployerSelection) {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
-        <div className="flex-1">
-          <EmployerDashboard 
-            employerInfo={{
-              companyName: employerInfo.companyName,
-              contactName: employerInfo.contactName,
-              contactEmail: employerInfo.contactEmail,
-              contactPhone: employerInfo.contactPhone
-            }}
-            onNewApplication={resetForm} 
-          />
+        <div className="flex-1" style={{backgroundColor: 'var(--color-gray-light)', paddingTop: '5rem', paddingBottom: '5rem'}}>
+          <div className="max-w-6xl mx-auto px-6">
+            <EmployerSelectionStep 
+              onNext={handleEmployerSelection}
+              onBack={cancelEmployerSelection}
+            />
+          </div>
         </div>
         <Footer />
       </div>
     );
+  }
+
+  // Show sign-up/login page for candidates after form completion
+  if (showSignUpLogin) {
+    return (
+      <SignUpLogin 
+        formData={formData}
+        onSignUpComplete={handleSignUpComplete}
+        onLoginComplete={handleLoginComplete}
+      />
+    );
+  }
+
+  // Show dashboard based on user type
+  if (showDashboard) {
+    if (formData.userType === 'candidate' || isAuthenticated) {
+      return (
+        <CandidateDashboard 
+          userProfile={userProfile}
+          onNewApplication={startNewApplication}
+          onLogout={logout}
+        />
+      );
+    } else {
+      return (
+        <div className="min-h-screen flex flex-col">
+          <Header />
+          <div className="flex-1">
+            <EmployerDashboard 
+              employerInfo={{
+                companyName: employerInfo.companyName,
+                contactName: employerInfo.contactName,
+                contactEmail: employerInfo.contactEmail,
+                contactPhone: employerInfo.contactPhone
+              }}
+              onNewApplication={resetForm} 
+            />
+          </div>
+          <Footer />
+        </div>
+      );
+    }
   }
 
   return (
