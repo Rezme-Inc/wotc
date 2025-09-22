@@ -1,13 +1,21 @@
 import React from 'react';
 
-export const Footer: React.FC = () => {
+interface FooterProps {
+  onLogoClick?: () => void;
+}
+
+export const Footer: React.FC<FooterProps> = ({ onLogoClick }) => {
   return (
     <footer className="bg-white-50 border-t border-gray-200 mt-auto">
       <div className="max-w-7xl mx-auto px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
-            <div className="flex flex-col">
+            <button 
+              onClick={onLogoClick}
+              className="flex flex-col hover:opacity-80 transition-opacity duration-200 cursor-pointer"
+              aria-label="Return to home page"
+            >
               <div className="flex items-center">
                 <span className="text-4xl font-bold text-black font-poppins">réz</span>
                 <span className="text-4xl font-bold text-cinnabar font-poppins">me</span>
@@ -16,7 +24,7 @@ export const Footer: React.FC = () => {
               <span className="text-xs font-medium text-black font-poppins mt-1 leading-none tracking-tighter">
                 Tax Credit Management
               </span>
-            </div>
+            </button>
             <p className="text-gray35 text-sm leading-relaxed font-poppins mt-4">
               Automating Fair Chance<br />
               Hiring compliance for<br />
