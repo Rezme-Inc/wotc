@@ -75,6 +75,7 @@ function AppRefactored() {
     handleLoginComplete,
     loginToDashboard,
     logout,
+    goToWelcomePage,
     resetForm
   } = useFormState();
 
@@ -87,7 +88,7 @@ function AppRefactored() {
   if (showEmployerSelection) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
+        <Header onLogoClick={goToWelcomePage} />
         <div className="flex-1" style={{backgroundColor: 'var(--color-gray-light)', paddingTop: '5rem', paddingBottom: '5rem'}}>
           <div className="max-w-6xl mx-auto px-6">
             <EmployerSelectionStep 
@@ -96,7 +97,7 @@ function AppRefactored() {
             />
           </div>
         </div>
-        <Footer />
+        <Footer onLogoClick={goToWelcomePage} />
       </div>
     );
   }
@@ -125,7 +126,7 @@ function AppRefactored() {
     } else {
       return (
         <div className="min-h-screen flex flex-col">
-          <Header />
+          <Header onLogoClick={goToWelcomePage} />
           <div className="flex-1">
             <EmployerDashboard 
               employerInfo={{
@@ -137,7 +138,7 @@ function AppRefactored() {
               onNewApplication={resetForm} 
             />
           </div>
-          <Footer />
+          <Footer onLogoClick={goToWelcomePage} />
         </div>
       );
     }
@@ -145,7 +146,7 @@ function AppRefactored() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <Header onLogoClick={resetForm} />
       
       {/* Full Width Gray Section - Title and Step Indicator */}
       <section style={{backgroundColor: 'var(--color-gray-light)', paddingTop: '5rem', paddingBottom: '5rem'}}>
@@ -177,7 +178,7 @@ function AppRefactored() {
 
           {/* Main Content Card */}
           <main>
-            <div className="card-body p-6 lg:p-8">
+            <div>
               {formData.currentStep === 1 && (
                 <WelcomeStep 
                   userType={formData.userType}
@@ -332,7 +333,7 @@ function AppRefactored() {
         </div>
       </section>
       
-      <Footer />
+      <Footer onLogoClick={goToWelcomePage} />
     </div>
   );
 }

@@ -263,6 +263,16 @@ export const useFormState = () => {
     resetForm();
   }, []);
 
+  const goToWelcomePage = useCallback(() => {
+    setShowDashboard(false);
+    setShowSignUpLogin(false);
+    setShowEmployerSelection(false);
+    setFormData((prev: WOTCFormData) => ({
+      ...prev,
+      currentStep: 1
+    }));
+  }, []);
+
   const resetForm = useCallback(() => {
     setShowDashboard(false);
     setShowSignUpLogin(false);
@@ -304,6 +314,7 @@ export const useFormState = () => {
     handleLoginComplete,
     loginToDashboard,
     logout,
+    goToWelcomePage,
     resetForm,
     setShowDashboard
   };
