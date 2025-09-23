@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowRight, ArrowLeft, User, AlertCircle, AlertTriangle } from 'lucide-react';
+import { ArrowRight, ArrowLeft, User, AlertCircle, AlertTriangle, CheckCircle } from 'lucide-react';
 import { PersonalInfo } from '../types/wotc';
 
 interface PersonalInfoStepProps {
@@ -17,10 +17,13 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
 }) => {
   const [errors, setErrors] = useState<string[]>([]);
   const [fieldErrors, setFieldErrors] = useState<{[key: string]: boolean}>({});
+  const [showAffirmations, setShowAffirmations] = useState<boolean>(false);
+  const [validFields, setValidFields] = useState<{[key: string]: boolean}>({});
 
   const validateAndProceed = () => {
     const newErrors: string[] = [];
     const newFieldErrors: {[key: string]: boolean} = {};
+    const newValidFields: {[key: string]: boolean} = {};
 
     // Check all required fields and add validation classes
     const fullNameInput = document.getElementById('fullName') as HTMLInputElement;
@@ -42,82 +45,100 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
       newErrors.push('Your name is required');
       fullNameInput?.classList.add('is-invalid');
       newFieldErrors.fullName = true;
+      newValidFields.fullName = false;
     } else {
       fullNameInput?.classList.add('is-valid');
       newFieldErrors.fullName = false;
+      newValidFields.fullName = true;
     }
 
     if (!personalInfo.socialSecurityNumber.trim()) {
       newErrors.push('Social security number is required');
       ssnInput?.classList.add('is-invalid');
       newFieldErrors.socialSecurityNumber = true;
+      newValidFields.socialSecurityNumber = false;
     } else if (!/^\d{3}-?\d{2}-?\d{4}$/.test(personalInfo.socialSecurityNumber.replace(/\D/g, ''))) {
       newErrors.push('Social security number must be 9 digits');
       ssnInput?.classList.add('is-invalid');
       newFieldErrors.socialSecurityNumber = true;
+      newValidFields.socialSecurityNumber = false;
     } else {
       ssnInput?.classList.add('is-valid');
       newFieldErrors.socialSecurityNumber = false;
+      newValidFields.socialSecurityNumber = true;
     }
 
     if (!personalInfo.streetAddress.trim()) {
       newErrors.push('Street address is required');
       addressInput?.classList.add('is-invalid');
       newFieldErrors.streetAddress = true;
+      newValidFields.streetAddress = false;
     } else {
       addressInput?.classList.add('is-valid');
       newFieldErrors.streetAddress = false;
+      newValidFields.streetAddress = true;
     }
 
     if (!personalInfo.city.trim()) {
       newErrors.push('City is required');
       cityInput?.classList.add('is-invalid');
       newFieldErrors.city = true;
+      newValidFields.city = false;
     } else {
       cityInput?.classList.add('is-valid');
       newFieldErrors.city = false;
+      newValidFields.city = true;
     }
 
     if (!personalInfo.state.trim()) {
       newErrors.push('State is required');
       stateInput?.classList.add('is-invalid');
       newFieldErrors.state = true;
+      newValidFields.state = false;
     } else {
       stateInput?.classList.add('is-valid');
       newFieldErrors.state = false;
+      newValidFields.state = true;
     }
 
     if (!personalInfo.zipCode.trim()) {
       newErrors.push('ZIP code is required');
       zipInput?.classList.add('is-invalid');
       newFieldErrors.zipCode = true;
+      newValidFields.zipCode = false;
     } else {
       zipInput?.classList.add('is-valid');
       newFieldErrors.zipCode = false;
+      newValidFields.zipCode = true;
     }
 
     if (!personalInfo.county.trim()) {
       newErrors.push('County is required');
       countyInput?.classList.add('is-invalid');
       newFieldErrors.county = true;
+      newValidFields.county = false;
     } else {
       countyInput?.classList.add('is-valid');
       newFieldErrors.county = false;
+      newValidFields.county = true;
     }
 
     if (!personalInfo.telephoneNumber.trim()) {
       newErrors.push('Telephone number is required');
       phoneInput?.classList.add('is-invalid');
       newFieldErrors.telephoneNumber = true;
+      newValidFields.telephoneNumber = false;
     } else {
       phoneInput?.classList.add('is-valid');
       newFieldErrors.telephoneNumber = false;
+      newValidFields.telephoneNumber = true;
     }
 
     if (!personalInfo.dateOfBirth) {
       newErrors.push('Date of birth is required');
       dobInput?.classList.add('is-invalid');
       newFieldErrors.dateOfBirth = true;
+      newValidFields.dateOfBirth = false;
     } else {
       const birthDate = new Date(personalInfo.dateOfBirth);
       const today = new Date();
@@ -125,17 +146,23 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
         newErrors.push('Date of birth cannot be in the future');
         dobInput?.classList.add('is-invalid');
         newFieldErrors.dateOfBirth = true;
+        newValidFields.dateOfBirth = false;
       } else {
         dobInput?.classList.add('is-valid');
         newFieldErrors.dateOfBirth = false;
+        newValidFields.dateOfBirth = true;
       }
     }
 
     setErrors(newErrors);
     setFieldErrors(newFieldErrors);
+    setValidFields(newValidFields);
+    
+    // Always show affirmations for valid fields, regardless of whether there are errors
+    setShowAffirmations(true);
 
     if (newErrors.length === 0) {
-      // Add a small delay to show the validation feedback, then proceed
+      // Only proceed to next step if all fields are valid
       setTimeout(() => {
         onNext();
       }, 500);
@@ -154,6 +181,40 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
     if (digits.length <= 3) return digits;
     if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
     return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
+  };
+
+  const handleInputChange = (field: string, value: string) => {
+    // Clear affirmations when user starts typing
+    if (showAffirmations) {
+      setShowAffirmations(false);
+      setValidFields({});
+    }
+    onUpdate({ ...personalInfo, [field]: value });
+  };
+
+  // Encouraging messages for each field
+  const affirmationMessages = {
+    fullName: "Perfect! Your name looks great!",
+    socialSecurityNumber: "Excellent! Your SSN is properly formatted!",
+    streetAddress: "Great! Your address is complete!",
+    city: "Nice! City information looks good!",
+    state: "Perfect! State is properly entered!",
+    zipCode: "Excellent! ZIP code is valid!",
+    county: "Great! County information is complete!",
+    telephoneNumber: "Perfect! Phone number is properly formatted!",
+    dateOfBirth: "Excellent! Date of birth is valid!"
+  };
+
+  // Component for positive affirmation
+  const PositiveAffirmation = ({ field }: { field: string }) => {
+    if (!showAffirmations || !validFields[field]) return null;
+    
+    return (
+      <div className="positive-affirmation">
+        <CheckCircle className="positive-affirmation-icon" />
+        {affirmationMessages[field as keyof typeof affirmationMessages]}
+      </div>
+    );
   };
 
   return (
@@ -201,7 +262,7 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
                     className="form-input"
                     id="fullName"
                     value={personalInfo.fullName}
-                    onChange={(e) => onUpdate({ ...personalInfo, fullName: e.target.value })}
+                    onChange={(e) => handleInputChange('fullName', e.target.value)}
                     placeholder="Enter your full legal name"
                     required
                   />
@@ -209,12 +270,13 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
                     <AlertCircle className="field-error-icon" />
                   )}
                 </div>
-                <div className="valid-feedback">
+                {/* <div className="valid-feedback">
                   Looks good!
-                </div>
+                </div> */}
                 <div className="invalid-feedback">
                   Please provide your full legal name.
                 </div>
+                <PositiveAffirmation field="fullName" />
               </div>
 
               <div>
@@ -229,7 +291,7 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
                     value={personalInfo.socialSecurityNumber}
                     onChange={(e) => {
                       const formatted = formatSSN(e.target.value);
-                      onUpdate({ ...personalInfo, socialSecurityNumber: formatted });
+                      handleInputChange('socialSecurityNumber', formatted);
                     }}
                     placeholder="XXX-XX-XXXX"
                     maxLength={11}
@@ -239,12 +301,13 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
                     <AlertCircle className="field-error-icon" />
                   )}
                 </div>
-                <div className="valid-feedback">
+                {/* <div className="valid-feedback">
                   Looks good!
-                </div>
+                </div> */}
                 <div className="invalid-feedback">
                   Please provide a valid 9-digit SSN.
                 </div>
+                <PositiveAffirmation field="socialSecurityNumber" />
                 <p id="ssn-hint" className="form-hint">
                   Required for tax credit verification
                 </p>
@@ -258,11 +321,13 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
               </label>
               <input
                 type="text"
+                id="streetAddress"
                 value={personalInfo.streetAddress}
-                onChange={(e) => onUpdate({ ...personalInfo, streetAddress: e.target.value })}
-                className="w-full px-5 py-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 font-poppins text-gray35 bg-white shadow-sm hover:shadow-md"
+                onChange={(e) => handleInputChange('streetAddress', e.target.value)}
+                className="form-input"
                 placeholder="Enter your street address"
               />
+              <PositiveAffirmation field="streetAddress" />
             </div>
 
             {/* City, State, ZIP */}
@@ -274,34 +339,40 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
                 <div>
                   <input
                     type="text"
+                    id="city"
                     value={personalInfo.city}
-                    onChange={(e) => onUpdate({ ...personalInfo, city: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 font-poppins text-gray35 bg-white shadow-sm hover:shadow-md"
+                    onChange={(e) => handleInputChange('city', e.target.value)}
+                    className="form-input"
                     placeholder="City"
                   />
+                  <PositiveAffirmation field="city" />
                 </div>
                 <div>
                   <input
                     type="text"
+                    id="state"
                     value={personalInfo.state}
-                    onChange={(e) => onUpdate({ ...personalInfo, state: e.target.value.toUpperCase() })}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 font-poppins text-gray35 bg-white shadow-sm hover:shadow-md"
+                    onChange={(e) => handleInputChange('state', e.target.value.toUpperCase())}
+                    className="form-input"
                     placeholder="State"
                     maxLength={2}
                   />
+                  <PositiveAffirmation field="state" />
                 </div>
                 <div>
                   <input
                     type="text"
+                    id="zipCode"
                     value={personalInfo.zipCode}
                     onChange={(e) => {
                       const value = e.target.value.replace(/\D/g, '');
-                      onUpdate({ ...personalInfo, zipCode: value });
+                      handleInputChange('zipCode', value);
                     }}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 font-poppins text-gray35 bg-white shadow-sm hover:shadow-md"
+                    className="form-input"
                     placeholder="ZIP Code"
                     maxLength={5}
                   />
+                  <PositiveAffirmation field="zipCode" />
                 </div>
               </div>
             </div>
@@ -314,11 +385,13 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
                 </label>
                 <input
                   type="text"
+                  id="county"
                   value={personalInfo.county}
-                  onChange={(e) => onUpdate({ ...personalInfo, county: e.target.value })}
-                  className="w-full px-5 py-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 font-poppins text-gray35 bg-white shadow-sm hover:shadow-md"
+                  onChange={(e) => handleInputChange('county', e.target.value)}
+                  className="form-input"
                   placeholder="Enter your county"
                 />
+                <PositiveAffirmation field="county" />
               </div>
 
               <div>
@@ -327,15 +400,17 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
                 </label>
                 <input
                   type="text"
+                  id="telephoneNumber"
                   value={personalInfo.telephoneNumber}
                   onChange={(e) => {
                     const formatted = formatPhone(e.target.value);
-                    onUpdate({ ...personalInfo, telephoneNumber: formatted });
+                    handleInputChange('telephoneNumber', formatted);
                   }}
-                  className="w-full px-5 py-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 font-poppins text-gray35 bg-white shadow-sm hover:shadow-md"
+                  className="form-input"
                   placeholder="(XXX) XXX-XXXX"
                   maxLength={14}
                 />
+                <PositiveAffirmation field="telephoneNumber" />
               </div>
             </div>
 
@@ -346,10 +421,12 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({
               </label>
               <input
                 type="date"
+                id="dateOfBirth"
                 value={personalInfo.dateOfBirth}
-                onChange={(e) => onUpdate({ ...personalInfo, dateOfBirth: e.target.value })}
-                className="w-full px-5 py-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 font-poppins text-gray35 bg-white shadow-sm hover:shadow-md"
+                onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
+                className="form-input"
               />
+              <PositiveAffirmation field="dateOfBirth" />
             </div>
           </div>
         </div>

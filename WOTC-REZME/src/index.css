@@ -128,6 +128,28 @@ input, textarea, select {
   font-family: 'Poppins', sans-serif;
 }
 
+/* Positive affirmation styles */
+.positive-affirmation {
+  @apply flex items-center text-sm mt-2 font-medium text-green-600;
+  font-family: 'Poppins', sans-serif;
+  animation: fadeInUp 0.3s ease-out;
+}
+
+.positive-affirmation-icon {
+  @apply w-4 h-4 mr-2 text-green-500;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Card components */
 .card {
   background-color: var(--color-background);
