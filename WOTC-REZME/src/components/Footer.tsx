@@ -74,43 +74,43 @@ export const Footer: React.FC<FooterProps> = ({ onLogoClick }) => {
             <h3 className="text-black font-medium font-poppins">Legal & Policies</h3>
             <nav className="space-y-3">
               <a 
-                href="#" 
+                href="https://app.termly.io/policy-viewer/policy.html?policyUUID=e05577fe-11ce-47d5-9a97-c994b0ee6acf" 
                 className="block text-gray35 text-sm hover:text-black transition-colors duration-200 font-poppins"
               >
                 Privacy Policy
               </a>
               <a 
-                href="#" 
+                href="https://app.termly.io/policy-viewer/policy.html?policyUUID=6947f494-a92e-419a-82df-ddc2ec5a1743" 
                 className="block text-gray35 text-sm hover:text-black transition-colors duration-200 font-poppins"
               >
                 Cookie Policy
               </a>
               <a 
-                href="#" 
+                href="https://app.termly.io/policy-viewer/policy.html?policyUUID=40404d5f-9640-47ad-bab0-8f2bb32aabc8" 
                 className="block text-gray35 text-sm hover:text-black transition-colors duration-200 font-poppins"
               >
                 Terms & Conditions
               </a>
               <a 
-                href="#" 
+                href="https://app.termly.io/policy-viewer/policy.html?policyUUID=2dee6321-2901-4da4-a2e6-d31333c344620" 
                 className="block text-gray35 text-sm hover:text-black transition-colors duration-200 font-poppins"
               >
                 Disclaimer
               </a>
               <a 
-                href="#" 
+                href="https://www.canva.com/design/DAGbAYTxAqQ/7VXnGimgiKAWzBXfJBfbVQ/edit" 
                 className="block text-gray35 text-sm hover:text-black transition-colors duration-200 font-poppins"
               >
                 Branding Guidelines
               </a>
               <a 
-                href="#" 
+                href="#https://app.pactsafe.com/sign?r=656335a17c5752be211f42bb&s=656335a17c5752be211f42bd&signature=mmgK3G~HAApM5Xp-bZmWlgO~3DQka7e6OqzsCyEpDIs8Zu8uJzmbCAbS7-89E~L0ZHCSQ6kytTBr7FSbyyX7o4AHaqssthcwwdXE7Njy1jo~w9z3bFUHh5ThLRfplS~VaSSCygyKw2cQ-dOm23rVhjJHS2Twn4JH9K4i5uo-Ihawo8NnVls~s~wzitNBCfJL5hBzarsxGYbgW-nN8pVMFKfslOzJWQrnNoogynAaEToOjkaraNcyPgmVaY8l4iYvZJxzmVR1rxwDDJH8gghYZmYjk0Oqn-r4glbTauhuqiwo391PrnsXA6KTZdZ2ovSo8o-egdfyXtOuGIHqIJqVSQ__" 
                 className="block text-gray35 text-sm hover:text-black transition-colors duration-200 font-poppins"
               >
                 Open AI Data Processing Agreement
               </a>
               <a 
-                href="#" 
+                href="https://app.vanta.com/rezme.app/trust/kbynv6xr5c2g82tzmhq3qz/controls" 
                 className="block text-gray35 text-sm hover:text-black transition-colors duration-200 font-poppins"
               >
                 Trust Center
